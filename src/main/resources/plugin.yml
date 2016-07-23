@@ -1,0 +1,15 @@
+name: MF-Game
+version: 1.0
+description: the game
+author: Phanta
+website: https://phanta.xyz
+main: io.github.phantamanta44.mobafort.game.GamePlugin
+depend: [MF-ResProvider]
+commands:
+    mf:
+      usage: '/mf'
+      description: hidden admin powers
+permissions:
+    mf.admin:
+        description: admin powers activate
+        default: op
