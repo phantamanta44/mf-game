@@ -6,10 +6,19 @@ website: https://phanta.xyz
 main: io.github.phantamanta44.mobafort.game.GamePlugin
 depend: [MF-ResProvider]
 commands:
-    mf:
-      usage: '/mf'
-      description: hidden admin powers
+    queue:
+      usage: '/queue'
+      description: queue for a match
+    unqueue:
+      usage: '/unqueue'
+      descrition: unqueue for a match
+    stats:
+      usage: '/stats [player]'
+      description: view player stats
+    items:
+      usage: '/items [player]'
+      description: view player items
 permissions:
     mf.admin:
-        description: admin powers activate
-        default: op
+      description: admin powers go
+      default: op
