@@ -11,13 +11,36 @@ commands:
       description: queue for a match
     unqueue:
       usage: '/unqueue'
-      descrition: unqueue for a match
+      descrition: dequeue for a match
+      aliases: dequeue
     stats:
       usage: '/stats [player]'
       description: view player stats
+      aliases: s
     items:
       usage: '/items [player]'
       description: view player items
+      aliases: i
+    mia:
+      usage: '/mia'
+      description: ping mia
+      aliases: m
+    omw:
+      usage: '/omw'
+      description: ping omw
+      aliases: o
+    caution:
+      usage: '/caution'
+      description: ping caution
+      aliases: c
+    helpme:
+      usage: '/helpme'
+      description: ping assist
+      aliases: h
+    all:
+      usage: '/all'
+      description: chat with both teams
+      aliases: a
 permissions:
     mf.admin:
       description: admin powers go

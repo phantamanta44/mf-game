@@ -24,9 +24,7 @@ public class Announcer {
 
 	public static void team(String msg, Team team) {
 		String withPref = (team == Team.RED ? PREF_TEAM_RED : PREF_TEAM_BLUE) + msg;
-		GamePlugin.getEngine().getPlayers().stream()
-				.filter(e -> e.getValue().getTeam() == team)
-				.forEach(e -> Bukkit.getServer().getPlayer(e.getKey()).sendMessage(withPref));
+		GamePlugin.getEngine().getPlayers(team).forEach(e -> Bukkit.getServer().getPlayer(e.getKey()).sendMessage(withPref));
 	}
 
 	public static void player(String msg, UUID id) {
@@ -35,6 +33,10 @@ public class Announcer {
 
 	public static void player(String msg, Player player) {
 		player.sendMessage(PREF_PLAYER + msg);
+	}
+
+	public static String chat(Player pl, String msg) {
+		return pl.getName() + ": " + msg;
 	}
 
 }

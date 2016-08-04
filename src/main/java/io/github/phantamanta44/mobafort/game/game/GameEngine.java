@@ -4,6 +4,7 @@ import io.github.phantamanta44.mobafort.game.map.MobaMap;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameEngine {
 
@@ -11,6 +12,7 @@ public class GameEngine {
 	private Map<UUID, PlayerInfo> players;
 	private MobaMap map;
 	private long startTime;
+	private boolean gameInProgress;
 
 	public GameEngine() {
 		queue = new LinkedList<>();
@@ -21,26 +23,42 @@ public class GameEngine {
 		this.map = map;
 	}
 
-	public void queue(Player player) {
-		queue.offer(player.getUniqueId());
+	public boolean queue(Player player) {
+		return !queue.contains(player.getUniqueId()) && queue.offer(player.getUniqueId());
 	}
 
-	public void beginGame(long tick) {
-		map.reset();
+	public boolean dequeue(Player player) {
+		return queue.remove(player.getUniqueId());
+	}
+
+	public int queueSize() {
+		return queue.size();
+	}
+
+	public void assignTeams() {
 		Team team = Team.BLUE;
 		for (int i = 0; i < 10; i++) {
 			players.put(queue.pop(), new PlayerInfo(team));
 			team = Team.values()[team.ordinal() ^ 1];
 		}
+	}
+
+	public void beginGame(long tick) {
+		map.reset();
 		startTime = tick;
+		gameInProgress = true;
+	}
+
+	public boolean isInGame() {
+		return gameInProgress;
 	}
 
 	public void tick(long tick) {
 		long gameTime = tick - startTime;
 
-		if (gameTime == 600L) {
+		if (gameTime == 600L)
 			Announcer.global("Minions are now spawning.");
-		} else if (gameTime == 6000L) {
+		else if (gameTime == 6000L) {
 			Announcer.global("Towers are now vulnerable.");
 			// TODO: Remove turret early-game armour
 		} else if (gameTime == 24000L) {
@@ -58,6 +76,7 @@ public class GameEngine {
 
 	public void endGame() {
 		players.clear();
+		gameInProgress = false;
 	}
 
 	public void dispose() {
@@ -66,6 +85,20 @@ public class GameEngine {
 
 	public Set<Map.Entry<UUID, PlayerInfo>> getPlayers() {
 		return players.entrySet();
+	}
+
+	public Set<Map.Entry<UUID, PlayerInfo>> getPlayers(Team team) {
+		return getPlayers().stream()
+				.filter(p -> p.getValue().getTeam() == team)
+				.collect(Collectors.toSet());
+	}
+
+	public PlayerInfo getPlayer(Player player) {
+		return players.get(player.getUniqueId());
+	}
+
+	public boolean isInGame(Player player) {
+		return players.containsKey(player.getUniqueId());
 	}
 
 	public static class PlayerInfo {

@@ -1,6 +1,8 @@
 package io.github.phantamanta44.mobafort.game;
 
+import io.github.phantamanta44.mobafort.game.game.Announcer;
 import io.github.phantamanta44.mobafort.game.game.GameEngine;
+import io.github.phantamanta44.mobafort.game.map.MapLoader;
 import io.github.phantamanta44.mobafort.weaponize.Weaponize;
 
 import java.util.function.LongConsumer;
@@ -9,6 +11,7 @@ public class StateMachine implements LongConsumer {
 
 	private GameEngine engine;
 	private GameState state;
+	private boolean stateChange;
 
 	public StateMachine(GameEngine engine) {
 		this.engine = engine;
@@ -20,21 +23,37 @@ public class StateMachine implements LongConsumer {
 	public void accept(long tick) {
 		switch (state) {
 			case QUEUEING:
+				if (!stateChange && tick % 600 == 0)
+					Announcer.global("Now queueing... (%d/%d)"); // TODO Format this str or something
+				if (engine.queueSize() >= 10)
+					setState(GameState.DRAFTING);
 				break;
 			case DRAFTING:
+				// TODO Class/hero selection
+				// TODO Some kind of draft pick mechanism
+				setState(GameState.PLAYING);
 				break;
 			case PLAYING:
 				engine.tick(tick);
+				if (!engine.isInGame())
+					setState(GameState.CONCLUSION);
 				break;
 			case CONCLUSION:
+				// TODO Display stats somehow
+				setState(GameState.QUEUEING);
 				break;
 		}
+		stateChange = false;
 	}
 
-	public void advance() {
-		state = GameState.values()[(state.ordinal() + 1) % GameState.values().length];
+	private void setState(GameState newState) {
+		state = newState;
 		switch (state) {
+			case QUEUEING:
+				engine.setMap(MapLoader.random());
+				break;
 			case DRAFTING:
+				engine.assignTeams();
 				break;
 			case PLAYING:
 				engine.beginGame(Weaponize.INSTANCE.getTick());
@@ -42,9 +61,12 @@ public class StateMachine implements LongConsumer {
 			case CONCLUSION:
 				engine.endGame();
 				break;
-			case QUEUEING:
-				break;
 		}
+		stateChange = true;
+	}
+
+	public GameState getState() {
+		return state;
 	}
 
 }
