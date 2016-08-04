@@ -8,21 +8,25 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BasicStatItem extends AbstractItem {
+public abstract class UniqueStatItem extends AbstractItem {
 
-	private final List<ProvidedStat<?>> stats;
+	private final List<ProvidedStat<?>> statsCommon;
+	private final Map<String, ProvidedStat<?>> statsUnique;
 	private final String name;
 	private final List<String> lore;
 
-	public BasicStatItem(String id, ItemSig sig, String name, List<String> lore, ProvidedStat<?>... stats) {
+	public UniqueStatItem(String id, ItemSig sig, String name, List<String> lore, ProvidedStat<?>[] common, Object[] unique) {
 		super(id, sig);
 		this.name = name;
 		this.lore = lore;
-		this.stats = Arrays.asList(stats);
+		this.statsCommon = Arrays.asList(common);
+		this.statsUnique = new HashMap<>();
+		for (int i = 0; i < unique.length; i += 2)
+			this.statsUnique.put((String)unique[i], (ProvidedStat<?>)unique[i + 1]);
 	}
 
 	@Override
@@ -40,12 +44,12 @@ public abstract class BasicStatItem extends AbstractItem {
 
 	@Override
 	public List<ProvidedStat<?>> getCommonStats(Player player, ItemStack stack) {
-		return stats;
+		return statsCommon;
 	}
 
 	@Override
 	public Map<String, ProvidedStat<?>> getUniqueStats(Player player, ItemStack itemStack) {
-		return Collections.emptyMap();
+		return statsUnique;
 	}
 
 }
