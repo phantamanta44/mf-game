@@ -19,7 +19,7 @@ public class BootItems {
 		public static final String ID = "bboots", NAME = "\u00a7rLeather Boots";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a75\u00a7lUNIQUE Passive - Swift:",
-				"\u00a7a+25 Movement Speed"
+				"\u00a7b+25 Movement Speed"
 		);
 		private static final Object[] UNQ = new Object[] {
 				"swift", new ProvidedStat<>(MOVE_SPEED, 25, SRC_ITEM, ProvidedStat.ReduceType.ADD)
@@ -38,7 +38,7 @@ public class BootItems {
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+30 Armour", "",
 				"\u00a75\u00a7lUNIQUE Passive - Swift:",
-				"\u00a7a+45 Movement Speed"
+				"\u00a7b+45 Movement Speed"
 		);
 		private static final ProvidedStat<?>[] CMN = new ProvidedStat<?>[] {
 				new ProvidedStat<>(ARM, 30, SRC_ITEM, ProvidedStat.ReduceType.ADD)
@@ -60,7 +60,7 @@ public class BootItems {
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+25 Magic Resist", "",
 				"\u00a75\u00a7lUNIQUE Passive - Swift:",
-				"\u00a7a+45 Movement Speed"
+				"\u00a7b+45 Movement Speed"
 		);
 		private static final ProvidedStat<?>[] CMN = new ProvidedStat<?>[] {
 				new ProvidedStat<>(MR, 25, SRC_ITEM, ProvidedStat.ReduceType.ADD)
@@ -82,7 +82,7 @@ public class BootItems {
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+35% Attack Speed", "",
 				"\u00a75\u00a7lUNIQUE Passive - Swift:",
-				"\u00a7a+45 Movement Speed"
+				"\u00a7b+45 Movement Speed"
 		);
 		private static final ProvidedStat<?>[] CMN = new ProvidedStat<?>[] {
 				new ProvidedStat<>(MR, 35, SRC_ITEM, ProvidedStat.ReduceType.ADD)
@@ -104,7 +104,7 @@ public class BootItems {
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+15% Critical Strike Chance", "",
 				"\u00a75\u00a7lUNIQUE Passive - Swift:",
-				"\u00a7a+50 Movement Speed"
+				"\u00a7b+50 Movement Speed"
 		);
 		private static final ProvidedStat<?>[] CMN = new ProvidedStat<?>[] {
 				new ProvidedStat<>(CRIT_CHANCE, 0.15F, SRC_ITEM, ProvidedStat.ReduceType.ADD)
