@@ -259,7 +259,7 @@ public class HeroEzreal implements IHero {
 						"\u00a79energy projectile in the target direction, dealing",
 						"\u00a79{350/500/650} \u00a76(+100% Bonus AD) \u00a7a(+90% AP) \u00a79magic damage to enemies",
 						"\u00a79it passes through. Each enemy hit reduces the projectile's",
-						"\u00a79damage by 10%, down to a minimum 30% damage.",
+						"\u00a79damage by 10%, down to a minimum 30% damage."
 				);
 			}
 
