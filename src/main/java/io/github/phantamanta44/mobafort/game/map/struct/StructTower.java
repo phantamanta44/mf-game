@@ -1,4 +1,4 @@
-package io.github.phantamanta44.mobafort.game.struct;
+package io.github.phantamanta44.mobafort.game.map.struct;
 
 import io.github.phantamanta44.mobafort.game.game.Team;
 import io.github.phantamanta44.mobafort.game.util.StattedDamageDummy;

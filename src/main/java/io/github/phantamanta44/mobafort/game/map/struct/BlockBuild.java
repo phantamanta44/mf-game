@@ -1,4 +1,4 @@
-package io.github.phantamanta44.mobafort.game.struct;
+package io.github.phantamanta44.mobafort.game.map.struct;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;

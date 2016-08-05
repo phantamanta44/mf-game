@@ -1,4 +1,4 @@
-package io.github.phantamanta44.mobafort.game.struct;
+package io.github.phantamanta44.mobafort.game.map.struct;
 
 import io.github.phantamanta44.mobafort.lib.math.CylBounds;
 import org.bukkit.entity.LivingEntity;

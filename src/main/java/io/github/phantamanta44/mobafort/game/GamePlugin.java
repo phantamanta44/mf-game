@@ -2,12 +2,15 @@ package io.github.phantamanta44.mobafort.game;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.github.phantamanta44.mobafort.game.command.*;
+import io.github.phantamanta44.mobafort.game.event.InventoryManipulationHandler;
 import io.github.phantamanta44.mobafort.game.game.Announcer;
 import io.github.phantamanta44.mobafort.game.game.GameEngine;
 import io.github.phantamanta44.mobafort.game.item.impl.Tier1RawItems;
 import io.github.phantamanta44.mobafort.game.map.MapLoader;
 import io.github.phantamanta44.mobafort.mfrp.item.IItem;
 import io.github.phantamanta44.mobafort.mfrp.item.ItemRegistry;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -26,12 +29,14 @@ public class GamePlugin extends JavaPlugin {
 		stater = new StateMachine(engine);
 		registerItemImplementations();
 		registerCommands();
+		Bukkit.getServer().getPluginManager().registerEvents(new InventoryManipulationHandler(), this);
 		MapLoader.load(new File(getDataFolder(), "maps.json"));
 	}
 
 	@Override
 	public void onDisable() {
 		engine.dispose();
+		HandlerList.unregisterAll(this);
 	}
 
 	private void registerItemImplementations() {

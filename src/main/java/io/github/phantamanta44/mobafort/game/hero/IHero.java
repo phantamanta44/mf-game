@@ -1,7 +1,18 @@
 package io.github.phantamanta44.mobafort.game.hero;
 
-/**
- * Created by phanta on 8/4/16.
- */
-public class IHero {
+import io.github.phantamanta44.mobafort.game.hero.spell.HeroKit;
+import io.github.phantamanta44.mobafort.lib.item.ItemSig;
+
+public interface IHero {
+
+	String getName();
+
+	ItemSig getIcon();
+
+	HeroClass getHeroClass();
+
+	IBaseStats getStats();
+
+	HeroKit getKit();
+
 }

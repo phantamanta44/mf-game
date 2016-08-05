@@ -1,6 +1,6 @@
 package io.github.phantamanta44.mobafort.game.map;
 
-import io.github.phantamanta44.mobafort.game.struct.StructTower;
+import io.github.phantamanta44.mobafort.game.map.struct.StructTower;
 import io.github.phantamanta44.mobafort.lib.collection.OneToManyMap;
 import org.bukkit.World;
 import org.bukkit.util.Vector;

@@ -1,7 +1,11 @@
 package io.github.phantamanta44.mobafort.game.game;
 
 import io.github.phantamanta44.mobafort.game.map.MobaMap;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +51,10 @@ public class GameEngine {
 		map.reset();
 		startTime = tick;
 		gameInProgress = true;
+		players.keySet().stream()
+				.map(Bukkit.getServer()::getPlayer)
+				.filter(p -> p != null)
+				.forEach(GameEngine::initInventory);
 	}
 
 	public boolean isInGame() {
@@ -99,6 +107,12 @@ public class GameEngine {
 
 	public boolean isInGame(Player player) {
 		return players.containsKey(player.getUniqueId());
+	}
+
+	private static void initInventory(Player player) {
+		PlayerInventory inv = player.getInventory();
+		inv.setItem(7, new ItemStack(Material.TIPPED_ARROW, 1));
+		inv.setHeldItemSlot(7);
 	}
 
 	public static class PlayerInfo {

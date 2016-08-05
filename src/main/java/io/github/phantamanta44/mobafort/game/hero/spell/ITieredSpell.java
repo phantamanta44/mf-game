@@ -9,14 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public abstract class TieredSpell implements IWeapon {
+public interface ITieredSpell extends IWeapon {
 
-	@Override
-	public void tick(long tick) {
-		// NO-OP
-	}
-
-	public abstract TieredSpellInstance instantiate();
+	TieredSpellInstance instantiate();
 
 	abstract class TieredSpellInstance implements IWeaponInstance {
 
@@ -30,6 +25,16 @@ public abstract class TieredSpell implements IWeapon {
 
 		public int getLevel() {
 			return level;
+		}
+
+		@Override
+		public void tick(long tick) {
+			// NO-OP
+		}
+
+		@Override
+		public void kill() {
+			// NO-OP
 		}
 
 		protected List<String> format(String... parts) {

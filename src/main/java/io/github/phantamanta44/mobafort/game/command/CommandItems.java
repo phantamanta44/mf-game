@@ -2,7 +2,6 @@ package io.github.phantamanta44.mobafort.game.command;
 
 import io.github.phantamanta44.mobafort.game.GamePlugin;
 import io.github.phantamanta44.mobafort.game.game.Announcer;
-import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.mfrp.item.IItem;
 import io.github.phantamanta44.mobafort.mfrp.item.ItemTracker;
 import org.bukkit.Bukkit;
@@ -34,8 +33,7 @@ public class CommandItems implements CommandExecutor {
 					msg[0] = String.format("\u00a73%s's Items:", target.getName());
 					AtomicInteger index = new AtomicInteger(1);
 					items.forEach(e -> {
-						ItemSig sig = e.getValue().getType();
-						ItemStack fake = new ItemStack(sig.material, 1, (short)sig.meta);
+						ItemStack fake = e.getValue().getType().construct(1);
 						e.getValue().initialize(pl, fake);
 						msg[index.getAndIncrement()] = "\u00a78- " + fake.getItemMeta().getDisplayName();
 					});
