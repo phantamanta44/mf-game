@@ -40,10 +40,12 @@ public class AutoAttackSpell implements IWeapon {
 	public static class Instance implements IWeaponInstance {
 
 		private final Player pl;
+		private final HeroKit kit;
 		private final CooldownEngine cd;
 
 		public Instance(Player player) {
 			this.pl = player;
+			this.kit = GamePlugin.getEngine().getPlayer(pl).getHero().getKit();
 			this.cd = new CooldownEngine(pl, false);
 		}
 
@@ -74,7 +76,6 @@ public class AutoAttackSpell implements IWeapon {
 
 		@Override
 		public void onInteract(PlayerInteractEvent event) {
-			HeroKit kit = GamePlugin.getEngine().getPlayer(pl).getHero().getKit();
 			if (cd.offCooldown()) {
 				RayTrace trace = new RayTrace(pl, kit.getAutoAttackRange(), (int)Math.ceil(kit.getAutoAttackRange()));
 				Object target = null;
@@ -99,9 +100,9 @@ public class AutoAttackSpell implements IWeapon {
 						}
 					} else {
 						if (target instanceof LivingEntity)
-							new AutoAttackMissile(pl, (LivingEntity)target, kit.getAutoAttackSpeed()).dispatch();
+							new AutoAttackMissile(pl, (LivingEntity)target, kit).dispatch();
 						else if (target instanceof Structure)
-							new AutoAttackMissile(pl, (Structure)target, kit.getAutoAttackSpeed()).dispatch();
+							new AutoAttackMissile(pl, (Structure)target, kit).dispatch();
 					}
 					cd.cooldown((long)(Math.pow(Math.min(StatTracker.getStat(pl, Stats.AS).getValue(), 2.5D), -1D) * 20D));
 				}

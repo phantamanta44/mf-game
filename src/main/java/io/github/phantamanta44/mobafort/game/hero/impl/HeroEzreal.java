@@ -1,10 +1,14 @@
 package io.github.phantamanta44.mobafort.game.hero.impl;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import io.github.phantamanta44.mobafort.game.hero.HeroClass;
+import io.github.phantamanta44.mobafort.game.hero.HeroKit;
 import io.github.phantamanta44.mobafort.game.hero.IBaseStats;
 import io.github.phantamanta44.mobafort.game.hero.IHero;
-import io.github.phantamanta44.mobafort.game.hero.HeroKit;
 import io.github.phantamanta44.mobafort.game.hero.spell.ITieredSpell;
+import io.github.phantamanta44.mobafort.game.hero.spell.missile.AutoAttackMissile;
+import io.github.phantamanta44.mobafort.game.hero.spell.missile.IMissileDecorator;
+import io.github.phantamanta44.mobafort.lib.effect.ParticleUtils;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
 import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
@@ -23,6 +27,8 @@ import static io.github.phantamanta44.mobafort.mfrp.stat.StatTracker.SRC_BASE;
 public class HeroEzreal implements IHero {
 
 	private static final ItemSig ICON = new ItemSig(Material.STONE);
+	private static final IMissileDecorator<AutoAttackMissile> AA_DECOR = (p, t) ->
+			ParticleUtils.dispatchEffect(p.getLocation(), EnumWrappers.Particle.ENCHANTMENT_TABLE, 3, 0.05F);
 
 	@Override
 	public String getName() {
@@ -57,7 +63,7 @@ public class HeroEzreal implements IHero {
 
 	@Override
 	public HeroKit getKit() {
-		return new HeroKit(S1.INSTANCE, S2.INSTANCE, S3.INSTANCE, S4.INSTANCE, false, 4.4D, 0.55D);
+		return new HeroKit(S1.INSTANCE, S2.INSTANCE, S3.INSTANCE, S4.INSTANCE, false, 4.4D, 0.55D, AA_DECOR);
 	}
 
 	private static class S1 implements ITieredSpell {

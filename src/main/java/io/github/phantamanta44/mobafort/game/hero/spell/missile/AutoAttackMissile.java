@@ -1,6 +1,7 @@
 package io.github.phantamanta44.mobafort.game.hero.spell.missile;
 
 import io.github.phantamanta44.mobafort.game.event.MobaEventAutoAttack;
+import io.github.phantamanta44.mobafort.game.hero.HeroKit;
 import io.github.phantamanta44.mobafort.game.map.struct.Structure;
 import io.github.phantamanta44.mobafort.mfrp.stat.StatTracker;
 import io.github.phantamanta44.mobafort.weaponize.stat.Damage;
@@ -17,18 +18,26 @@ import java.util.function.Supplier;
 public class AutoAttackMissile extends HomingMissile {
 
 	private final LivingEntity tgt;
+	private final HeroKit srcKit;
 	private final Supplier<Vector> tgtPosGetter;
 
-	public AutoAttackMissile(Player src, LivingEntity tgt, double missileSpeed) {
-		super(src.getLocation(), missileSpeed, 0D, src.getUniqueId(), CollisionCriteria.NONE);
+	public AutoAttackMissile(Player src, LivingEntity tgt, HeroKit srcKit) {
+		super(src.getLocation(), srcKit.getAutoAttackSpeed(), 0D, src.getUniqueId(), CollisionCriteria.NONE);
 		this.tgt = tgt;
+		this.srcKit = srcKit;
 		this.tgtPosGetter = () -> tgt.getLocation().toVector();
 	}
 
-	public AutoAttackMissile(Player src, Structure tgt, double missileSpeed) {
-		super(src.getLocation(), missileSpeed, 0D, src.getUniqueId(), CollisionCriteria.NONE);
+	public AutoAttackMissile(Player src, Structure tgt, HeroKit srcKit) {
+		super(src.getLocation(), srcKit.getAutoAttackSpeed(), 0D, src.getUniqueId(), CollisionCriteria.NONE);
 		this.tgt = tgt.getDamageBuffer();
+		this.srcKit = srcKit;
 		this.tgtPosGetter = () -> tgt.getBounds().getBasePos();
+	}
+
+	@Override
+	public void tick(long tick) {
+		srcKit.autoAttackEffects(this, tick);
 	}
 
 	@Override
