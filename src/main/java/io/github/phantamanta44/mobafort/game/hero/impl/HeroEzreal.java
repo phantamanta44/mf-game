@@ -3,13 +3,14 @@ package io.github.phantamanta44.mobafort.game.hero.impl;
 import io.github.phantamanta44.mobafort.game.hero.HeroClass;
 import io.github.phantamanta44.mobafort.game.hero.IBaseStats;
 import io.github.phantamanta44.mobafort.game.hero.IHero;
-import io.github.phantamanta44.mobafort.game.hero.spell.HeroKit;
+import io.github.phantamanta44.mobafort.game.hero.HeroKit;
 import io.github.phantamanta44.mobafort.game.hero.spell.ITieredSpell;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
 import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
 import io.github.phantamanta44.mobafort.weaponize.weapon.IWeapon;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class HeroEzreal implements IHero {
 
 	@Override
 	public HeroKit getKit() {
-		return new HeroKit(S1.INSTANCE, S2.INSTANCE, S3.INSTANCE, S4.INSTANCE);
+		return new HeroKit(S1.INSTANCE, S2.INSTANCE, S3.INSTANCE, S4.INSTANCE, false, 4.4D, 0.55D);
 	}
 
 	private static class S1 implements ITieredSpell {
@@ -69,7 +70,7 @@ public class HeroEzreal implements IHero {
 		}
 
 		@Override
-		public TieredSpellInstance instantiate() {
+		public TieredSpellInstance instantiate(Player player) {
 			return new Instance();
 		}
 
@@ -126,7 +127,7 @@ public class HeroEzreal implements IHero {
 		}
 
 		@Override
-		public TieredSpellInstance instantiate() {
+		public TieredSpellInstance instantiate(Player player) {
 			return new Instance();
 		}
 
@@ -183,7 +184,7 @@ public class HeroEzreal implements IHero {
 		}
 
 		@Override
-		public TieredSpellInstance instantiate() {
+		public TieredSpellInstance instantiate(Player player) {
 			return new Instance();
 		}
 
@@ -239,7 +240,7 @@ public class HeroEzreal implements IHero {
 		}
 
 		@Override
-		public TieredSpellInstance instantiate() {
+		public TieredSpellInstance instantiate(Player player) {
 			return new Instance();
 		}
 

@@ -1,5 +1,6 @@
 package io.github.phantamanta44.mobafort.game.hero.spell;
 
+import io.github.phantamanta44.mobafort.lib.format.StringUtils;
 import io.github.phantamanta44.mobafort.mfrp.stat.StatTracker;
 import io.github.phantamanta44.mobafort.weaponize.Weaponize;
 import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
@@ -44,6 +45,10 @@ public class CooldownEngine {
 
 	public long getRemaining() {
 		return length - (Weaponize.INSTANCE.getTick() - cdStart);
+	}
+
+	public String getBarRepresentation() {
+		return StringUtils.genTimeBar((int)getRemaining(), (int)length);
 	}
 
 }

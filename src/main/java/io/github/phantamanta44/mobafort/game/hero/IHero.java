@@ -1,6 +1,5 @@
 package io.github.phantamanta44.mobafort.game.hero;
 
-import io.github.phantamanta44.mobafort.game.hero.spell.HeroKit;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 
 public interface IHero {

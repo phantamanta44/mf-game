@@ -1,6 +1,10 @@
 package io.github.phantamanta44.mobafort.game.game;
 
+import io.github.phantamanta44.mobafort.game.hero.IHero;
+import io.github.phantamanta44.mobafort.game.hero.spell.AutoAttackSpell;
+import io.github.phantamanta44.mobafort.game.hero.spell.ITieredSpell;
 import io.github.phantamanta44.mobafort.game.map.MobaMap;
+import io.github.phantamanta44.mobafort.weaponize.event.ItemCheckHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -54,7 +58,7 @@ public class GameEngine {
 		players.keySet().stream()
 				.map(Bukkit.getServer()::getPlayer)
 				.filter(p -> p != null)
-				.forEach(GameEngine::initInventory);
+				.forEach(this::initInventory);
 	}
 
 	public boolean isInGame() {
@@ -109,15 +113,25 @@ public class GameEngine {
 		return players.containsKey(player.getUniqueId());
 	}
 
-	private static void initInventory(Player player) {
+	private void initInventory(Player player) {
 		PlayerInventory inv = player.getInventory();
+		ITieredSpell[] spells = getPlayer(player).getHero().getKit().getSpells();
+		for (int i = 0; i <= 3; i++)
+			inv.setItem(i, spells[i].getType().construct(1));
 		inv.setItem(7, new ItemStack(Material.TIPPED_ARROW, 1));
-		inv.setHeldItemSlot(7);
+		inv.setItem(8, AutoAttackSpell.ITEM_SIG.construct(1));
+		inv.setHeldItemSlot(8);
+		updateWeapons(player);
+	}
+
+	public static void updateWeapons(Player player) {
+		new ItemCheckHandler.CheckTask(player.getInventory(), player.getUniqueId()).run();
 	}
 
 	public static class PlayerInfo {
 
 		private Team team;
+		private IHero hero;
 
 		private PlayerInfo(Team team) {
 			this.team = team;
@@ -125,6 +139,14 @@ public class GameEngine {
 
 		public Team getTeam() {
 			return team;
+		}
+
+		public void setHero(IHero hero) {
+			this.hero = hero;
+		}
+
+		public IHero getHero() {
+			return hero;
 		}
 
 	}

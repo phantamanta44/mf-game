@@ -2,6 +2,7 @@ package io.github.phantamanta44.mobafort.game.hero.spell;
 
 import io.github.phantamanta44.mobafort.lib.format.StringUtils;
 import io.github.phantamanta44.mobafort.weaponize.weapon.IWeapon;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 public interface ITieredSpell extends IWeapon {
 
-	TieredSpellInstance instantiate();
+	TieredSpellInstance instantiate(Player player);
 
 	abstract class TieredSpellInstance implements IWeaponInstance {
 
