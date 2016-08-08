@@ -10,6 +10,7 @@ import io.github.phantamanta44.mobafort.lib.effect.ParticleUtils;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.lib.math.RayTrace;
 import io.github.phantamanta44.mobafort.mfrp.stat.StatTracker;
+import io.github.phantamanta44.mobafort.mfrp.status.IAutoAttackSpell;
 import io.github.phantamanta44.mobafort.weaponize.stat.Damage;
 import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
 import io.github.phantamanta44.mobafort.weaponize.weapon.IWeapon;
@@ -22,7 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Collections;
 import java.util.List;
 
-public class AutoAttackSpell implements IWeapon {
+public class AutoAttackSpell implements IAutoAttackSpell {
 
 	public static final AutoAttackSpell INSTANCE = new AutoAttackSpell();
 	public static final ItemSig ITEM_SIG = new ItemSig(Material.STONE);
