@@ -113,6 +113,10 @@ public class GameEngine {
 		return players.containsKey(player.getUniqueId());
 	}
 
+	public boolean areFriendly(Player p, Player pl) {
+		return getPlayer(p).team == getPlayer(pl).team;
+	}
+
 	private void initInventory(Player player) {
 		PlayerInventory inv = player.getInventory();
 		ITieredSpell[] spells = getPlayer(player).getHero().getKit().getSpells();

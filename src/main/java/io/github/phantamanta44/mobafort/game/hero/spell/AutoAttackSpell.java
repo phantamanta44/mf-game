@@ -82,7 +82,7 @@ public class AutoAttackSpell implements IWeapon {
 				for (Location loc : trace) {
 					// TODO Target selection
 				}
-				if (target != null) {
+				if (target != null) { // TODO sfx
 					if (kit.isMelee()) {
 						LivingEntity leTgt = null;
 						if (target instanceof LivingEntity)

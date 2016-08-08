@@ -1,24 +1,42 @@
 package io.github.phantamanta44.mobafort.game.hero.impl;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import io.github.phantamanta44.mobafort.game.GamePlugin;
+import io.github.phantamanta44.mobafort.game.game.Announcer;
 import io.github.phantamanta44.mobafort.game.hero.HeroClass;
 import io.github.phantamanta44.mobafort.game.hero.HeroKit;
 import io.github.phantamanta44.mobafort.game.hero.IBaseStats;
 import io.github.phantamanta44.mobafort.game.hero.IHero;
+import io.github.phantamanta44.mobafort.game.hero.spell.ChannelEngine;
+import io.github.phantamanta44.mobafort.game.hero.spell.CooldownEngine;
 import io.github.phantamanta44.mobafort.game.hero.spell.ITieredSpell;
 import io.github.phantamanta44.mobafort.game.hero.spell.missile.AutoAttackMissile;
+import io.github.phantamanta44.mobafort.game.hero.spell.missile.HomingMissile;
 import io.github.phantamanta44.mobafort.game.hero.spell.missile.IMissileDecorator;
+import io.github.phantamanta44.mobafort.lib.collection.TimedExpiryMap;
 import io.github.phantamanta44.mobafort.lib.effect.ParticleUtils;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
+import io.github.phantamanta44.mobafort.lib.math.RayTrace;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
+import io.github.phantamanta44.mobafort.mfrp.stat.StatTracker;
+import io.github.phantamanta44.mobafort.mfrp.status.IStatStatus;
+import io.github.phantamanta44.mobafort.mfrp.status.StatusTracker;
+import io.github.phantamanta44.mobafort.weaponize.projectile.SpellProjectile;
+import io.github.phantamanta44.mobafort.weaponize.stat.Damage;
 import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
 import io.github.phantamanta44.mobafort.weaponize.weapon.IWeapon;
+import io.github.phantamanta44.mobafort.weaponize.weapon.WeaponTracker;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat.ReduceType.ADD;
 import static io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat.ReduceType.PERC;
@@ -77,10 +95,18 @@ public class HeroEzreal implements IHero {
 
 		@Override
 		public TieredSpellInstance instantiate(Player player) {
-			return new Instance();
+			return new Instance(player);
 		}
 
 		private static class Instance extends TieredSpellInstance {
+
+			private final Player pl;
+			private final CooldownEngine cd;
+
+			public Instance(Player player) {
+				this.pl = player;
+				this.cd = new CooldownEngine(player);
+			}
 
 			@Override
 			public String getName() {
@@ -106,7 +132,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getHudInfo() {
-				return ""; // TODO Implement
+				return cd.offCooldown() ? null : cd.getBarRepresentation();
 			}
 
 			@Override
@@ -116,7 +142,53 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public void onInteract(PlayerInteractEvent event) {
-				// TODO Implement
+				if (cd.offCooldown()) {
+					if (Stats.expendMana(pl, 28 + level * 3)) {
+						new Missile(pl.getLocation()).dispatch(); // TODO sfx
+						cd.cooldown(130 - 10 * level);
+					}
+					else
+						Announcer.player("You don't have enough mana.", pl);
+				}
+				else
+					Announcer.player("You cannot use this right now.", pl);
+			}
+
+			private class Missile extends SpellProjectile {
+
+				private Missile(Location loc) {
+					super(loc, loc.getDirection().multiply(0.37D), 0.25D, pl.getUniqueId(), CollisionCriteria.ENTITY);
+				}
+
+				@Override
+				public void onHit(CollisionCriteria col, List<Entity> ents) {
+					LivingEntity hit = ents.stream() // TODO Check if target is on own team
+							.filter(e -> e instanceof LivingEntity)
+							.map(e -> (LivingEntity)e)
+							.findAny().orElse(null);
+					if (hit != null) {
+						new Damage(35 + 20 * level, Damage.DamageType.PHYSICAL)
+								.withDmg(Stats.AD, 1.1D)
+								.withDmg(Stats.AP, 0.4D)
+								.deal(pl, hit);
+						WeaponTracker.get(getSource()).forEach(w -> {
+							try {
+								((CooldownEngine) w.getClass().getDeclaredField("cd").get(w)).subtract(30L);
+							} catch (NoSuchFieldException | IllegalAccessException ignored) { }
+						});
+						kill();
+					}
+				}
+
+				@Override
+				public void tick(long tick) {
+					Location loc = getLocation();
+					ParticleUtils.dispatchEffect(loc, EnumWrappers.Particle.ENCHANTMENT_TABLE, 3, 0.07F);
+					ParticleUtils.dispatchEffect(loc, EnumWrappers.Particle.CRIT_MAGIC, 3, 0.07F);
+					if (getTimeAlive() > 15L)
+						kill();
+				}
+
 			}
 
 		}
@@ -126,6 +198,42 @@ public class HeroEzreal implements IHero {
 	private static class S2 implements ITieredSpell {
 
 		private static final S2 INSTANCE = new S2();
+		private static final String STATUS_ID = "heroEzrealEssenceFlux";
+		private static final TimedExpiryMap<UUID, ProvidedStat<?>> providedStats = new TimedExpiryMap<>(GamePlugin.INSTANCE, 100L);
+
+		private S2() {
+			StatusTracker.registerStatus(new IStatStatus() {
+				@Override
+				public Collection<ProvidedStat<?>> getProvidedStats(Player player, int stacks) {
+					return Collections.singletonList(providedStats.get(player.getUniqueId()));
+				}
+
+				@Override
+				public String getId() {
+					return STATUS_ID;
+				}
+
+				@Override
+				public String getName() {
+					return "Essence Flux";
+				}
+
+				@Override
+				public String getDescription() {
+					return "Gain bonus attack speed.";
+				}
+
+				@Override
+				public boolean isBuff() {
+					return true;
+				}
+
+				@Override
+				public long getDuration() {
+					return 100L;
+				}
+			});
+		}
 
 		@Override
 		public ItemSig getType() {
@@ -134,14 +242,22 @@ public class HeroEzreal implements IHero {
 
 		@Override
 		public TieredSpellInstance instantiate(Player player) {
-			return new Instance();
+			return new Instance(player);
 		}
 
 		private static class Instance extends TieredSpellInstance {
 
+			private final Player pl;
+			private final CooldownEngine cd;
+
+			public Instance(Player player) {
+				this.pl = player;
+				this.cd = new CooldownEngine(player);
+			}
+
 			@Override
 			public String getName() {
-				return "Essense Flux";
+				return "Essence Flux";
 			}
 
 			@Override
@@ -163,7 +279,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getHudInfo() {
-				return ""; // TODO Implement
+				return cd.offCooldown() ? null : cd.getBarRepresentation();
 			}
 
 			@Override
@@ -173,7 +289,49 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public void onInteract(PlayerInteractEvent event) {
-				// TODO Implement
+				if (cd.offCooldown()) {
+					if (Stats.expendMana(pl, 50 + level * 10)) {
+						new Missile(pl.getLocation()).dispatch(); // TODO sfx
+						cd.cooldown(180);
+					}
+					else
+						Announcer.player("You don't have enough mana.", pl);
+				}
+				else
+					Announcer.player("You cannot use this right now.", pl);
+			}
+
+			private class Missile extends SpellProjectile {
+
+				private Missile(Location loc) {
+					super(loc, loc.getDirection().multiply(0.32D), 0.4D, pl.getUniqueId(), CollisionCriteria.ENTITY);
+				}
+
+				@Override
+				public void onHit(CollisionCriteria col, List<Entity> ents) {
+					Set<UUID> seen = new HashSet<>();
+					ents.stream()
+							.filter(e -> e instanceof Player && !seen.contains(e.getUniqueId()))
+							.map(e -> (Player)e)
+							.filter(p -> GamePlugin.getEngine().areFriendly(p, pl))
+							.peek(p -> seen.add(p.getUniqueId()))
+							.peek(p -> providedStats.put(p.getUniqueId(),
+									new ProvidedStat<>(Stats.AS, 0.2F + 0.05F * level, StatTracker.SRC_STATUS, ProvidedStat.ReduceType.PERC)))
+							.forEach(p -> StatusTracker.inflict(p, STATUS_ID));
+					ents.stream()
+							.filter(e -> e instanceof LivingEntity && !seen.contains(e.getUniqueId())) // TODO Check if target is on own team
+							.peek(e -> seen.add(e.getUniqueId()))
+							.map(e -> (LivingEntity)e)
+							.forEach(e -> new Damage(70 + 45 * level, Damage.DamageType.MAGIC).withDmg(Stats.AP, 0.8D).deal(pl, e));
+				}
+
+				@Override
+				public void tick(long tick) {
+					ParticleUtils.dispatchEffect(getLocation(), EnumWrappers.Particle.CRIT, 7, 0.09F);
+					if (getTimeAlive() > 15L)
+						kill();
+				}
+
 			}
 
 		}
@@ -191,10 +349,18 @@ public class HeroEzreal implements IHero {
 
 		@Override
 		public TieredSpellInstance instantiate(Player player) {
-			return new Instance();
+			return new Instance(player);
 		}
 
 		private static class Instance extends TieredSpellInstance {
+
+			private final Player pl;
+			private final CooldownEngine cd;
+
+			public Instance(Player player) {
+				this.pl = player;
+				this.cd = new CooldownEngine(player);
+			}
 
 			@Override
 			public String getName() {
@@ -219,7 +385,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getHudInfo() {
-				return ""; // TODO Implement
+				return cd.offCooldown() ? null : cd.getBarRepresentation();
 			}
 
 			@Override
@@ -229,7 +395,71 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public void onInteract(PlayerInteractEvent event) {
-				// TODO Implement
+				if (cd.offCooldown()) {
+					if (Stats.expendMana(pl, 90)) {
+						List<Location> trace = StreamSupport.stream(new RayTrace(pl, 4D, 6).spliterator(), false).collect(Collectors.toList());
+						Location finalLoc = null;
+						for (int i = trace.size() - 1; i >= 0; i--) {
+							if (!trace.get(i).getBlock().getType().isSolid()) {
+								finalLoc = trace.get(i);
+								break;
+							}
+						}
+						for (int i = 0; i < 8; i++)
+							ParticleUtils.colourEffect(pl.getLocation(), EnumWrappers.Particle.SPELL_MOB, 1F, 1F, 0F, 1F);
+						if (finalLoc != null)
+							pl.teleport(finalLoc);
+						for (int i = 0; i < 8; i++)
+							ParticleUtils.colourEffect(pl.getLocation(), EnumWrappers.Particle.SPELL_MOB, 1F, 1F, 0F, 1F);
+						LivingEntity nearest = (LivingEntity)pl.getNearbyEntities(3.6D, 5D, 3.6D).stream()
+								.filter(e -> e instanceof LivingEntity)
+								.sequential()
+								.sorted((a, b) -> (int)Math.floor(a.getLocation().distanceSquared(b.getLocation())))
+								.findFirst().orElse(null);
+						if (nearest != null)
+							new Missile(nearest).dispatch(); // TODO sfx
+						cd.cooldown(380 - 30 * level);
+					}
+					else
+						Announcer.player("You don't have enough mana.", pl);
+				}
+				else
+					Announcer.player("You cannot use this right now.", pl);
+			}
+
+			private class Missile extends HomingMissile {
+
+				private final LivingEntity target;
+
+				private Missile(LivingEntity target) {
+					super(pl.getLocation(), 0.48D, 0D, pl.getUniqueId(), CollisionCriteria.NONE);
+					this.target = target;
+				}
+
+				@Override
+				protected Vector getTarget() {
+					return target.getLocation().toVector();
+				}
+
+				@Override
+				protected void onReachTarget() {
+					new Damage(75 + 50 * level, Damage.DamageType.MAGIC)
+							.withDmg(Stats.BONUS_AD, 0.5D)
+							.withDmg(Stats.AP, 0.75D)
+							.deal(pl, target);
+				}
+
+				@Override
+				public void onHit(CollisionCriteria col, List<Entity> ents) {
+					// NO-OP
+				}
+
+				@Override
+				public void tick(long tick) {
+					super.tick(tick);
+					ParticleUtils.dispatchEffect(getLocation(), EnumWrappers.Particle.CRIT, 3, 0.05F);
+				}
+
 			}
 
 		}
@@ -247,10 +477,20 @@ public class HeroEzreal implements IHero {
 
 		@Override
 		public TieredSpellInstance instantiate(Player player) {
-			return new Instance();
+			return new Instance(player);
 		}
 
 		private static class Instance extends TieredSpellInstance {
+
+			private final Player pl;
+			private final CooldownEngine cd;
+			private final ChannelEngine ch;
+
+			public Instance(Player player) {
+				this.pl = player;
+				this.cd = new CooldownEngine(player);
+				this.ch = new ChannelEngine(player);
+			}
 
 			@Override
 			public String getName() {
@@ -277,7 +517,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getHudInfo() {
-				return ""; // TODO Implement
+				return ch.isChanneling() ? ch.getBarRepresentation() : (cd.offCooldown() ? null : cd.getBarRepresentation());
 			}
 
 			@Override
@@ -287,7 +527,52 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public void onInteract(PlayerInteractEvent event) {
-				// TODO Implement
+				if (cd.offCooldown()) {
+					if (Stats.expendMana(pl, 100)) {
+						ch.channel(20L).setInterruptible(false).onComplete(() -> new Missile(pl.getLocation()).dispatch()); // TODO sfx
+						cd.cooldown(2400L);
+					}
+					else
+						Announcer.player("You don't have enough mana.", pl);
+				}
+				else
+					Announcer.player("You cannot use this right now.", pl);
+			}
+
+			private class Missile extends SpellProjectile {
+
+				private Missile(Location loc) {
+					super(loc, loc.getDirection().setY(0).normalize().multiply(0.5D), 1.36D, pl.getUniqueId(), CollisionCriteria.ENTITY);
+				}
+
+				@Override
+				public void onHit(CollisionCriteria col, List<Entity> ents) {
+					Set<UUID> seen = new HashSet<>();
+					ents.stream()
+							.filter(e -> e instanceof LivingEntity && !seen.contains(e.getUniqueId())) // TODO Check if target is on own team
+							.peek(e -> seen.add(e.getUniqueId()))
+							.map(e -> (LivingEntity)e)
+							.forEach(e -> {
+								double mult = Math.max(1.1D - 0.1D * seen.size() - 1, 0.3D);
+								new Damage((mult * (350 + 150 * level)), Damage.DamageType.MAGIC)
+										.withDmg(Stats.BONUS_AD, mult)
+										.withDmg(Stats.AP, mult * 0.9D)
+										.deal(pl, e);
+							});
+				}
+
+				@Override
+				public void tick(long tick) {
+					Vector perp = getVelocity().clone().setY(0).normalize();
+					double prevX = perp.getX();
+					perp.setX(perp.getZ()).setZ(-prevX);
+					for (int i = -1; i <= 1; i++)
+						ParticleUtils.dispatchEffect(getLocation().add(perp.multiply(i)), EnumWrappers.Particle.CRIT, 6, 0.5F);
+					ParticleUtils.dispatchEffect(getLocation(), EnumWrappers.Particle.ENCHANTMENT_TABLE, 8, 1.36F);
+					if (getTimeAlive() > 900L)
+						kill();
+				}
+
 			}
 
 		}
