@@ -31,6 +31,10 @@ public class GameEngine {
 		this.map = map;
 	}
 
+	public MobaMap getMap() {
+		return map;
+	}
+
 	public boolean queue(Player player) {
 		return !queue.contains(player.getUniqueId()) && queue.offer(player.getUniqueId());
 	}
@@ -70,10 +74,9 @@ public class GameEngine {
 
 		if (gameTime == 600L)
 			Announcer.global("Minions are now spawning.");
-		else if (gameTime == 6000L) {
+		else if (gameTime == 6000L)
 			Announcer.global("Towers are now vulnerable.");
-			// TODO: Remove turret early-game armour
-		} else if (gameTime == 24000L) {
+		else if (gameTime == 24000L) {
 			Announcer.global("<monster> has spawned.");
 			// TODO: Spawn some ultimate objective monster
 		}

@@ -4,7 +4,7 @@ import io.github.phantamanta44.mobafort.lib.collection.CollectionUtils;
 import io.github.phantamanta44.mobafort.lib.collection.OneToManyMap;
 import io.github.phantamanta44.mobafort.lib.entity.DummyLiving;
 import io.github.phantamanta44.mobafort.lib.math.MathUtils;
-import io.github.phantamanta44.mobafort.mfrp.stat.IStatted;
+import io.github.phantamanta44.mobafort.weaponize.stat.IStatted;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
 import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
 import org.apache.commons.lang.mutable.MutableDouble;

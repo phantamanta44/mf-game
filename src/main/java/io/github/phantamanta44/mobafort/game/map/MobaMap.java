@@ -17,6 +17,10 @@ public class MobaMap {
 		this.world = world;
 	}
 
+	public World getWorld() {
+		return world;
+	}
+
 	public void setRedSpawn(Vector pos) {
 		this.rSpawn = pos;
 	}
@@ -31,6 +35,14 @@ public class MobaMap {
 
 	public void addBlueTower(StructTower tower, Lane lane) {
 		bTowers.put(lane, tower);
+	}
+
+	public OneToManyMap<Lane, StructTower, List<StructTower>> getRedTowers() {
+		return rTowers;
+	}
+
+	public OneToManyMap<Lane, StructTower, List<StructTower>> getBlueTowers() {
+		return bTowers;
 	}
 
 	public void reset() {

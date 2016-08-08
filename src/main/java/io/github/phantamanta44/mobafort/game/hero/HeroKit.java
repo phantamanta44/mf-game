@@ -6,7 +6,7 @@ import io.github.phantamanta44.mobafort.game.hero.spell.missile.IMissileDecorato
 
 public class HeroKit {
 
-	private ITieredSpell[] spells; // TODO Autoattacks, hero passives
+	private ITieredSpell[] spells; // TODO hero passives
 	private boolean melee;
 	private double aaRange, aaSpeed;
 	private IMissileDecorator<AutoAttackMissile> aaDecor;

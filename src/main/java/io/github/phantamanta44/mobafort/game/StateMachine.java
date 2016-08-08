@@ -24,8 +24,8 @@ public class StateMachine implements LongConsumer {
 		switch (state) {
 			case QUEUEING:
 				if (!stateChange && tick % 600 == 0)
-					Announcer.global("Now queueing... (%d/%d)"); // TODO Format this str or something
-				if (engine.queueSize() >= 10)
+					Announcer.global(String.format("Now queueing... (%d/%d)", engine.queueSize(), 10));
+				if (engine.queueSize() >= 10) // TODO Variable queue sizes
 					setState(GameState.DRAFTING);
 				break;
 			case DRAFTING:
