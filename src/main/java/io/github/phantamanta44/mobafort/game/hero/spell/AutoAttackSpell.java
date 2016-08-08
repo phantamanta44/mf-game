@@ -6,6 +6,7 @@ import io.github.phantamanta44.mobafort.game.event.MobaEventAutoAttack;
 import io.github.phantamanta44.mobafort.game.hero.HeroKit;
 import io.github.phantamanta44.mobafort.game.hero.spell.missile.AutoAttackMissile;
 import io.github.phantamanta44.mobafort.game.map.struct.Structure;
+import io.github.phantamanta44.mobafort.lib.effect.AnimUtils;
 import io.github.phantamanta44.mobafort.lib.effect.ParticleUtils;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.lib.math.RayTrace;
@@ -105,6 +106,7 @@ public class AutoAttackSpell implements IAutoAttackSpell {
 						else if (target instanceof Structure)
 							new AutoAttackMissile(pl, (Structure)target, kit).dispatch();
 					}
+					AnimUtils.swingArm(pl);
 					cd.cooldown((long)(Math.pow(Math.min(StatTracker.getStat(pl, Stats.AS).getValue(), 2.5D), -1D) * 20D));
 				}
 			}
