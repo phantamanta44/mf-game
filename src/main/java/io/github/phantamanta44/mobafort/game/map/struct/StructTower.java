@@ -7,7 +7,6 @@ import io.github.phantamanta44.mobafort.game.hero.spell.missile.HomingMissile;
 import io.github.phantamanta44.mobafort.game.util.StattedDamageDummy;
 import io.github.phantamanta44.mobafort.lib.effect.ParticleUtils;
 import io.github.phantamanta44.mobafort.lib.math.CylBounds;
-import io.github.phantamanta44.mobafort.lib.math.RayTrace;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
 import io.github.phantamanta44.mobafort.weaponize.stat.Damage;
 import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
@@ -27,7 +26,7 @@ import static io.github.phantamanta44.mobafort.mfrp.stat.StatTracker.SRC_BASE;
 
 public class StructTower extends Structure {
 
-    public static final float RANGE = 6F;
+    public static final double RANGE = 6.1D;
 
     private final TowerType type;
     private final Team team;
@@ -37,15 +36,14 @@ public class StructTower extends Structure {
     private long lastShot = -1L;
     private boolean fort = true, reinf = false, targetable = false;
     private float dmgMult = 1F;
-    private LivingEntity prevTarget;
 
-    public StructTower(Vector pos, TowerType type, Team team, BlockBuild a, BlockBuild b, BlockBuild c, Vector bulletSrc, boolean fort) {
+    public StructTower(Vector pos, TowerType type, Team team, BlockBuild a, BlockBuild b, BlockBuild c, boolean fort) {
         super(new CylBounds(pos, 2.5F, 5F));
         this.type = type;
         this.team = team;
         this.builds = new BlockBuild[] {a, b, c};
-        this.bulletSrc = bulletSrc;
         this.fort = fort;
+        this.bulletSrc = pos.clone().setY(pos.getY() + 4.5F);
         reset();
     }
 
@@ -73,7 +71,7 @@ public class StructTower extends Structure {
         }
         World world = GamePlugin.getEngine().getMap().getWorld();
         if (gameTick - lastShot >= 24L) {
-            LivingEntity target = world.getNearbyEntities(getBounds().getBasePos().toLocation(world), 6.1D, 6.1D, 6.1D).stream()
+            LivingEntity target = world.getNearbyEntities(getBounds().getBasePos().toLocation(world), RANGE, RANGE, RANGE).stream()
                     .filter(e -> e instanceof LivingEntity) // TODO Attack prioritization
                     .map(e -> (LivingEntity)e) // TODO Don't attack own team
                     .findAny().orElse(null);

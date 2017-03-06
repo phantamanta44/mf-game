@@ -35,14 +35,17 @@ public class MapLoader {
                                 SerUtils.deserVector(d.get("redSpawn").getAsJsonObject()),
                                 SerUtils.deserVector(d.get("blueSpawn").getAsJsonObject())
                         );
+                        BlockBuild towerFull = BlockBuild.deserialize(d.get("buildTowerFull").getAsJsonArray());
+						BlockBuild towerHalf = BlockBuild.deserialize(d.get("buildTowerHalf").getAsJsonArray());
+						BlockBuild towerNone = BlockBuild.deserialize(d.get("buildTowerNone").getAsJsonArray());
                         d.get("redTowers").getAsJsonObject().entrySet().forEach(e -> {
                             Lane lane = Lane.valueOf(e.getKey());
                             e.getValue().getAsJsonArray().forEach(tElem -> {
                                 JsonObject tDto = tElem.getAsJsonObject();
-                                Vector base = SerUtils.deserVector(tDto.get("basePos").getAsJsonObject());
+                                Vector base = SerUtils.deserVector(tDto.get("pos").getAsJsonObject());
                                 StructTower.TowerType type = StructTower.TowerType.valueOf(tDto.get("type").getAsString());
                                 map.addRedTower(lane, () -> new StructTower(
-                                        base, type, Team.RED, null, null, null, null, lane != Lane.BOT // TODO Finish implementation
+                                        base, type, Team.RED, towerFull, towerHalf, towerNone, lane != Lane.BOT
                                 ));
                             });
                         });
@@ -50,10 +53,10 @@ public class MapLoader {
                             Lane lane = Lane.valueOf(e.getKey());
                             e.getValue().getAsJsonArray().forEach(tElem -> {
                                 JsonObject tDto = tElem.getAsJsonObject();
-                                Vector base = SerUtils.deserVector(tDto.get("basePos").getAsJsonObject());
+                                Vector base = SerUtils.deserVector(tDto.get("pos").getAsJsonObject());
                                 StructTower.TowerType type = StructTower.TowerType.valueOf(tDto.get("type").getAsString());
-                                map.addRedTower(lane, () -> new StructTower(
-                                        base, type, Team.BLUE, null, null, null, null, lane != Lane.BOT // TODO Finish implementation
+                                map.addBlueTower(lane, () -> new StructTower(
+                                        base, type, Team.BLUE, towerFull, towerHalf, towerNone, lane != Lane.BOT
                                 ));
                             });
                         });
