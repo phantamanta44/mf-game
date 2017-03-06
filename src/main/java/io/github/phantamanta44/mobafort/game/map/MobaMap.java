@@ -2,6 +2,7 @@ package io.github.phantamanta44.mobafort.game.map;
 
 import io.github.phantamanta44.mobafort.game.map.struct.StructTower;
 import io.github.phantamanta44.mobafort.lib.collection.OneToManyMap;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
@@ -10,23 +11,25 @@ import java.util.List;
 public class MobaMap {
 
 	private World world;
-	private Vector rSpawn, bSpawn;
+	private Location rSpawn, bSpawn;
 	private OneToManyMap<Lane, StructTower, List<StructTower>> rTowers, bTowers;
 
-	public MobaMap(World world) {
-		this.world = world;
+	public MobaMap(MapProvider prov) {
+		this.world = prov.world;
+		this.rSpawn = prov.rSpawn.toLocation(world, (float)(prov.rSpawn.angle(prov.bSpawn) * 180D / Math.PI), 0F);
+		this.bSpawn = prov.bSpawn.toLocation(world, (float)(prov.bSpawn.angle(prov.rSpawn) * 180D / Math.PI), 0F);
 	}
 
 	public World getWorld() {
 		return world;
 	}
 
-	public void setRedSpawn(Vector pos) {
-		this.rSpawn = pos;
+	public Location getRedSpawn() {
+		return rSpawn;
 	}
 
-	public void setBlueSpawn(Vector pos) {
-		this.bSpawn = pos;
+	public Location getBlueSpawn() {
+		return bSpawn;
 	}
 
 	public void addRedTower(StructTower tower, Lane lane) {
