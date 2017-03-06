@@ -61,7 +61,7 @@ public class GameEngine {
 		gameInProgress = true;
 		players.keySet().stream()
 				.map(Bukkit.getServer()::getPlayer)
-				.filter(p -> p != null)
+				.filter(Objects::nonNull)
 				.forEach(this::initInventory);
 	}
 
@@ -126,7 +126,7 @@ public class GameEngine {
 		for (int i = 0; i <= 3; i++)
 			inv.setItem(i, spells[i].getType().construct(1));
 		inv.setItem(7, new ItemStack(Material.TIPPED_ARROW, 1));
-		inv.setItem(8, AutoAttackSpell.ITEM_SIG.construct(1));
+		inv.setItem(8, AutoAttackSpell.TYPE.construct(1));
 		inv.setHeldItemSlot(8);
 		updateWeapons(player);
 	}

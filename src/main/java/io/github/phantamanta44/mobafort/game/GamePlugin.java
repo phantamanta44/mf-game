@@ -5,10 +5,15 @@ import io.github.phantamanta44.mobafort.game.command.*;
 import io.github.phantamanta44.mobafort.game.event.InventoryManipulationHandler;
 import io.github.phantamanta44.mobafort.game.game.Announcer;
 import io.github.phantamanta44.mobafort.game.game.GameEngine;
+import io.github.phantamanta44.mobafort.game.hero.IHero;
+import io.github.phantamanta44.mobafort.game.hero.spell.AutoAttackSpell;
+import io.github.phantamanta44.mobafort.game.hero.spell.ChannelEngine;
+import io.github.phantamanta44.mobafort.game.hero.spell.ITieredSpell;
 import io.github.phantamanta44.mobafort.game.item.impl.Tier1RawItems;
 import io.github.phantamanta44.mobafort.game.map.MapLoader;
 import io.github.phantamanta44.mobafort.mfrp.item.IItem;
 import io.github.phantamanta44.mobafort.mfrp.item.ItemRegistry;
+import io.github.phantamanta44.mobafort.weaponize.weapon.WeaponRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,8 +33,10 @@ public class GamePlugin extends JavaPlugin {
 		engine = new GameEngine();
 		stater = new StateMachine(engine);
 		registerItemImplementations();
+		registerHeroImplementations();
 		registerCommands();
 		Bukkit.getServer().getPluginManager().registerEvents(new InventoryManipulationHandler(), this);
+		ChannelEngine.init();
 		MapLoader.load(new File(getDataFolder(), "maps.json"));
 	}
 
@@ -50,6 +57,21 @@ public class GamePlugin extends JavaPlugin {
 						}
 					}).scan();
 		}
+	}
+
+	private void registerHeroImplementations() {
+		new FastClasspathScanner("io.github.phantamanta44.mobafort.game.hero.impl")
+				.matchAllClasses(c -> {
+					if (IHero.class.isAssignableFrom(c)) {
+						try {
+							IHero h = (IHero)c.newInstance();
+							for (ITieredSpell spell : h.getKit().getSpells())
+								WeaponRegistry.register(spell);
+						} catch (Exception ignored) { }
+					}
+				}).scan();
+		WeaponRegistry.register(AutoAttackSpell.INSTANCE);
+		// TODO Keep a hero registry somewhere
 	}
 
 	private void registerCommands() {

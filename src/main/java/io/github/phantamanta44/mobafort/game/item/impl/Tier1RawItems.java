@@ -1,6 +1,7 @@
 package io.github.phantamanta44.mobafort.game.item.impl;
 
 import io.github.phantamanta44.mobafort.game.item.BasicStatItem;
+import io.github.phantamanta44.mobafort.game.util.FreeItems;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
 import org.bukkit.Material;
@@ -16,7 +17,7 @@ public class Tier1RawItems {
 
 	public static class ShortSword extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.ARROW);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1shortsword", NAME = "\u00a7rShortsword";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+12% Attack Speed");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {

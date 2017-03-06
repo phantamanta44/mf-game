@@ -1,9 +1,9 @@
 package io.github.phantamanta44.mobafort.game.item.impl;
 
 import io.github.phantamanta44.mobafort.game.item.UniqueStatItem;
+import io.github.phantamanta44.mobafort.game.util.FreeItems;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
-import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ public class BootItems {
 
 	public static class LeatherBoots extends UniqueStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.ARROW);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "bboots", NAME = "\u00a7rLeather Boots";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a75\u00a7lUNIQUE Passive - Swift:",
@@ -33,7 +33,7 @@ public class BootItems {
 
 	public static class ArmourBoots extends UniqueStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.ARROW);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "barmourboots", NAME = "\u00a7rIronshod Treads";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+30 Armour", "",
@@ -55,7 +55,7 @@ public class BootItems {
 
 	public static class MagicResistBoots extends UniqueStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.ARROW);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "bmrboots", NAME = "\u00a7rNullifying Treads";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+25 Magic Resist", "",
@@ -77,7 +77,7 @@ public class BootItems {
 
 	public static class AttackSpeedBoots extends UniqueStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.ARROW);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "basboots", NAME = "\u00a7rStriker's Shoes";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+35% Attack Speed", "",
@@ -99,7 +99,7 @@ public class BootItems {
 
 	public static class CritBoots extends UniqueStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.ARROW);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "bcritboots", NAME = "\u00a7rAssassin's Treads";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+15% Critical Strike Chance", "",

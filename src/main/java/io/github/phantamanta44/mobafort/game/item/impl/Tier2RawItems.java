@@ -1,6 +1,7 @@
 package io.github.phantamanta44.mobafort.game.item.impl;
 
 import io.github.phantamanta44.mobafort.game.item.BasicStatItem;
+import io.github.phantamanta44.mobafort.game.util.FreeItems;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
 import org.bukkit.Material;
@@ -16,7 +17,7 @@ public class Tier2RawItems {
 
 	public static class Longsword extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2longsword", NAME = "\u00a7rLongsword";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+15 Attack Damage",
@@ -35,7 +36,7 @@ public class Tier2RawItems {
 
 	public static class HeavyMetal extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2heavymetal", NAME = "\u00a7rHeavy Metal";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+40 Attack Damage");
 		private static final ProvidedStat[] STATS = new ProvidedStat[]{
@@ -50,7 +51,7 @@ public class Tier2RawItems {
 
 	public static class SadisticSabre extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2vampiresword", NAME = "\u00a7rSadistic Sabre";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+12 Attack Damage",
@@ -69,7 +70,7 @@ public class Tier2RawItems {
 
 	public static class WhirlingSteel extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2steelwind", NAME = "\u00a7rWhirling Steel";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+25% Attack Speed");
 		private static final ProvidedStat[] STATS = new ProvidedStat[]{
@@ -105,7 +106,7 @@ public class Tier2RawItems {
 
 	public static class BigClub extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2bigclub", NAME = "\u00a7rReally Big Club";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+25 Attack Damage",
@@ -124,7 +125,7 @@ public class Tier2RawItems {
 
 	public static class Longbow extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "3longbow", NAME = "\u00a7rLongbow";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+30 Attack Damage",
@@ -164,7 +165,7 @@ public class Tier2RawItems {
 
 	public static class ManaMirror extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2manamirror", NAME = "\u00a7rMana Mirror";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+100% Mana Regeneration",
@@ -204,7 +205,7 @@ public class Tier2RawItems {
 
 	public static class DenseCluster extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2cluster", NAME = "\u00a7rDense Cluster";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+20 Ability Power",
@@ -223,13 +224,13 @@ public class Tier2RawItems {
 
 	public static class PiercingGaze extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2piercinggaze", NAME = "\u00a7rPiercing Gaze";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+15 Ability Power",
 				"\u00a7a+200 Health",
-				"\u00a7+50% Mana Regeneration",
-				"\u00a7+7 Magic Penetration"
+				"\u00a7a+50% Mana Regeneration",
+				"\u00a7a+7 Magic Penetration"
 		);
 		private static final ProvidedStat[] STATS = new ProvidedStat[]{
 				new ProvidedStat<>(AP, 15, SRC_ITEM, ProvidedStat.ReduceType.ADD),
@@ -246,7 +247,7 @@ public class Tier2RawItems {
 
 	public static class LostScripture extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2lostchapter", NAME = "\u00a7rLost Scripture";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+35 Ability Power",
@@ -305,7 +306,7 @@ public class Tier2RawItems {
 
 	public static class IronBrace extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2ironbrace", NAME = "\u00a7rIron Brace";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+18 Armour",
@@ -324,7 +325,7 @@ public class Tier2RawItems {
 
 	public static class BloodBuckler extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2bloodbuckler", NAME = "\u00a7rBloody Buckler";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+350 Health",
@@ -360,7 +361,7 @@ public class Tier2RawItems {
 
 	public static class Pathos extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2pathos", NAME = "\u00a7rPathos";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+20 Armour",
@@ -384,7 +385,7 @@ public class Tier2RawItems {
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+18 Armour",
 				"\u00a7a+12% Critical Strike Chance",
-				"\u00a7+8% Movement Speed"
+				"\u00a7a+8% Movement Speed"
 		);
 		private static final ProvidedStat[] STATS = new ProvidedStat[]{
 				new ProvidedStat<>(ARM, 18, SRC_ITEM, ProvidedStat.ReduceType.ADD),

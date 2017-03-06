@@ -11,7 +11,7 @@ public class Announcer {
 	public static final String PREF_GLOBAL = "\u00a7a[ALL] \u00a7r";
 	public static final String PREF_TEAM_RED = "\u00a7c[TEAM] \u00a7r";
 	public static final String PREF_TEAM_BLUE = "\u00a79[TEAM] \u00a7r";
-	public static final String PREF_PLAYER = "\u00a78[\u00a74!\u00a78] \uaa07r";
+	public static final String PREF_PLAYER = "\u00a78[\u00a74!\u00a78] \u00a7r";
 
 	public static void global(String msg) {
 		Bukkit.getServer().broadcastMessage(PREF_GLOBAL + msg);

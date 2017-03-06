@@ -57,8 +57,9 @@ public class ChannelEngine {
 	}
 
 	public ChannelFuture channel(long duration) {
-		ChannelFuture future = new ChannelFuture(duration, playerId);
+		ChannelFuture future = new ChannelFuture(duration, playerId, this);
 		channels.put(playerId, future);
+		current = future;
 		return future;
 	}
 
@@ -78,15 +79,17 @@ public class ChannelEngine {
 
 		private final long length, destTime;
 		private final UUID srcId;
+		private final ChannelEngine engine;
 		private final Collection<Runnable> tick = new LinkedList<>();
 		private final Collection<Runnable> compl = new LinkedList<>();
 		private final Collection<Runnable> cancel = new LinkedList<>();
 		private boolean interruptible, done;
 
-		private ChannelFuture(long length, UUID srcId) {
+		private ChannelFuture(long length, UUID srcId, ChannelEngine engine) {
 			this.length = length;
 			this.destTime = Weaponize.INSTANCE.getTick() + length;
 			this.srcId = srcId;
+			this.engine = engine;
 			this.interruptible = true;
 			this.done = false;
 		}
@@ -124,7 +127,7 @@ public class ChannelEngine {
 		}
 
 		public String getBarRepresentation() {
-			return StringUtils.genResourceBar((int)getRemaining(), (int)length, 60);
+			return StringUtils.genTimeBar((int)getRemaining(), (int)length);
 		}
 
 		private void tick() {
@@ -132,11 +135,13 @@ public class ChannelEngine {
 		}
 
 		private void complete() {
+			engine.current = null;
 			done = true;
 			compl.forEach(Runnable::run);
 		}
 
 		private void cancel() {
+			engine.current = null;
 			channels.remove(srcId, this);
 			done = true;
 			cancel.forEach(Runnable::run);

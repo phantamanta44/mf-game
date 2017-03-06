@@ -1,6 +1,7 @@
 package io.github.phantamanta44.mobafort.game.item.impl;
 
 import io.github.phantamanta44.mobafort.game.item.BasicStatItem;
+import io.github.phantamanta44.mobafort.game.util.FreeItems;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 import io.github.phantamanta44.mobafort.mfrp.stat.ProvidedStat;
 import org.bukkit.Material;
@@ -15,7 +16,7 @@ public class Tier3RawItems {
 
 	public static class Bloodthirst extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "3bloodthirst", NAME = "\u00a7rInhumanity Manifest";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+60 Attack Damage",
@@ -34,7 +35,7 @@ public class Tier3RawItems {
 
 	public static class Tempest extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "3tempest", NAME = "\u00a7rTempest";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+50% Attack Speed",
@@ -55,7 +56,7 @@ public class Tier3RawItems {
 
 	public static class FullAuto extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.DIAMOND);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "3fullauto", NAME = "\u00a7rFull-Auto";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+40% Attack Speed",

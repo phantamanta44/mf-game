@@ -16,7 +16,7 @@ public interface ITieredSpell extends IWeapon {
 
 	abstract class TieredSpellInstance implements IWeaponInstance {
 
-		private static final Pattern STR_TKN_PTN = Pattern.compile("\\{(.+?)\\}");
+		private static final Pattern STR_TKN_PTN = Pattern.compile("\\{(.*?)}");
 
 		protected int level = 0;
 
@@ -59,7 +59,7 @@ public interface ITieredSpell extends IWeapon {
 				return fmt.substring(StringUtils.nthOccurence(fmt, '|', level) + 1, end != -1 ? end : fmt.length());
 			}
 			else if (fmt.isEmpty())
-				return Integer.toString(level);
+				return Integer.toString(level + 1);
 			return fmt;
 		}
 

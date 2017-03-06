@@ -1,6 +1,7 @@
 package io.github.phantamanta44.mobafort.game.hero.impl;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.google.common.collect.Lists;
 import io.github.phantamanta44.mobafort.game.GamePlugin;
 import io.github.phantamanta44.mobafort.game.game.Announcer;
 import io.github.phantamanta44.mobafort.game.hero.HeroClass;
@@ -13,6 +14,7 @@ import io.github.phantamanta44.mobafort.game.hero.spell.ITieredSpell;
 import io.github.phantamanta44.mobafort.game.hero.spell.missile.AutoAttackMissile;
 import io.github.phantamanta44.mobafort.game.hero.spell.missile.HomingMissile;
 import io.github.phantamanta44.mobafort.game.hero.spell.missile.IMissileDecorator;
+import io.github.phantamanta44.mobafort.game.util.FreeItems;
 import io.github.phantamanta44.mobafort.lib.collection.TimedExpiryMap;
 import io.github.phantamanta44.mobafort.lib.effect.ParticleUtils;
 import io.github.phantamanta44.mobafort.lib.item.ItemSig;
@@ -87,10 +89,11 @@ public class HeroEzreal implements IHero {
 	private static class S1 implements ITieredSpell {
 
 		private static final S1 INSTANCE = new S1();
+		private static final ItemSig TYPE = new ItemSig(FreeItems.next());
 
 		@Override
 		public ItemSig getType() {
-			return new ItemSig(Material.STONE);
+			return TYPE;
 		}
 
 		@Override
@@ -101,7 +104,7 @@ public class HeroEzreal implements IHero {
 		private static class Instance extends TieredSpellInstance {
 
 			private final Player pl;
-			private final CooldownEngine cd;
+			public final CooldownEngine cd;
 
 			public Instance(Player player) {
 				this.pl = player;
@@ -110,7 +113,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getName() {
-				return "Mystic Shot";
+				return format("\u00a7fMystic Shot ({})");
 			}
 
 			@Override
@@ -144,7 +147,7 @@ public class HeroEzreal implements IHero {
 			public void onInteract(PlayerInteractEvent event) {
 				if (cd.offCooldown()) {
 					if (Stats.expendMana(pl, 28 + level * 3)) {
-						new Missile(pl.getLocation()).dispatch(); // TODO sfx
+						new Missile(pl.getEyeLocation()).dispatch(); // TODO sfx
 						cd.cooldown(130 - 10 * level);
 					}
 					else
@@ -173,8 +176,10 @@ public class HeroEzreal implements IHero {
 								.deal(pl, hit);
 						WeaponTracker.get(getSource()).forEach(w -> {
 							try {
-								((CooldownEngine) w.getClass().getDeclaredField("cd").get(w)).subtract(30L);
-							} catch (NoSuchFieldException | IllegalAccessException ignored) { }
+								((CooldownEngine)w.getClass().getDeclaredField("cd").get(w)).subtract(30L);
+							} catch (NoSuchFieldException | IllegalAccessException ignored) {
+								ignored.printStackTrace();
+							}
 						});
 						kill();
 					}
@@ -198,6 +203,7 @@ public class HeroEzreal implements IHero {
 	private static class S2 implements ITieredSpell {
 
 		private static final S2 INSTANCE = new S2();
+		private static final ItemSig TYPE = new ItemSig(FreeItems.next());
 		private static final String STATUS_ID = "heroEzrealEssenceFlux";
 		private static final TimedExpiryMap<UUID, ProvidedStat<?>> providedStats = new TimedExpiryMap<>(GamePlugin.INSTANCE, 100L);
 
@@ -237,7 +243,7 @@ public class HeroEzreal implements IHero {
 
 		@Override
 		public ItemSig getType() {
-			return new ItemSig(Material.STONE);
+			return TYPE;
 		}
 
 		@Override
@@ -248,7 +254,7 @@ public class HeroEzreal implements IHero {
 		private static class Instance extends TieredSpellInstance {
 
 			private final Player pl;
-			private final CooldownEngine cd;
+			public final CooldownEngine cd;
 
 			public Instance(Player player) {
 				this.pl = player;
@@ -257,7 +263,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getName() {
-				return "Essence Flux";
+				return format("\u00a7fEssence Flux ({})");
 			}
 
 			@Override
@@ -291,7 +297,7 @@ public class HeroEzreal implements IHero {
 			public void onInteract(PlayerInteractEvent event) {
 				if (cd.offCooldown()) {
 					if (Stats.expendMana(pl, 50 + level * 10)) {
-						new Missile(pl.getLocation()).dispatch(); // TODO sfx
+						new Missile(pl.getEyeLocation()).dispatch(); // TODO sfx
 						cd.cooldown(180);
 					}
 					else
@@ -341,10 +347,11 @@ public class HeroEzreal implements IHero {
 	private static class S3 implements ITieredSpell {
 
 		private static final S3 INSTANCE = new S3();
+		private static final ItemSig TYPE = new ItemSig(FreeItems.next());
 
 		@Override
 		public ItemSig getType() {
-			return new ItemSig(Material.STONE);
+			return TYPE;
 		}
 
 		@Override
@@ -355,7 +362,7 @@ public class HeroEzreal implements IHero {
 		private static class Instance extends TieredSpellInstance {
 
 			private final Player pl;
-			private final CooldownEngine cd;
+			public final CooldownEngine cd;
 
 			public Instance(Player player) {
 				this.pl = player;
@@ -364,7 +371,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getName() {
-				return "Arcane Shift";
+				return format("\u00a7fArcane Shift ({})");
 			}
 
 			@Override
@@ -397,21 +404,22 @@ public class HeroEzreal implements IHero {
 			public void onInteract(PlayerInteractEvent event) {
 				if (cd.offCooldown()) {
 					if (Stats.expendMana(pl, 90)) {
-						List<Location> trace = StreamSupport.stream(new RayTrace(pl, 4D, 6).spliterator(), false).collect(Collectors.toList());
+						RayTrace trace = new RayTrace(pl.getLocation(), pl.getLocation().getDirection().setY(0), 4D, 6);
+						List<Location> traceLocs = Lists.newArrayList(trace);
 						Location finalLoc = null;
-						for (int i = trace.size() - 1; i >= 0; i--) {
-							if (!trace.get(i).getBlock().getType().isSolid()) {
-								finalLoc = trace.get(i);
+						for (int i = traceLocs.size() - 1; i >= 0; i--) {
+							if (!traceLocs.get(i).getBlock().getType().isSolid()) {
+								finalLoc = traceLocs.get(i);
 								break;
 							}
 						}
 						for (int i = 0; i < 8; i++)
 							ParticleUtils.colourEffect(pl.getLocation(), EnumWrappers.Particle.SPELL_MOB, 1F, 1F, 0F, 1F);
 						if (finalLoc != null)
-							pl.teleport(finalLoc);
+							pl.teleport(finalLoc.setDirection(pl.getLocation().getDirection()));
 						for (int i = 0; i < 8; i++)
 							ParticleUtils.colourEffect(pl.getLocation(), EnumWrappers.Particle.SPELL_MOB, 1F, 1F, 0F, 1F);
-						LivingEntity nearest = (LivingEntity)pl.getNearbyEntities(3.6D, 5D, 3.6D).stream()
+						LivingEntity nearest = (LivingEntity)pl.getNearbyEntities(3.6D, 5D, 3.6D).stream() // TODO don't target teammates
 								.filter(e -> e instanceof LivingEntity)
 								.sequential()
 								.sorted((a, b) -> (int)Math.floor(a.getLocation().distanceSquared(b.getLocation())))
@@ -469,10 +477,11 @@ public class HeroEzreal implements IHero {
 	private static class S4 implements ITieredSpell {
 
 		private static final S4 INSTANCE = new S4();
+		private static final ItemSig TYPE = new ItemSig(FreeItems.next());
 
 		@Override
 		public ItemSig getType() {
-			return new ItemSig(Material.STONE);
+			return TYPE;
 		}
 
 		@Override
@@ -483,7 +492,7 @@ public class HeroEzreal implements IHero {
 		private static class Instance extends TieredSpellInstance {
 
 			private final Player pl;
-			private final CooldownEngine cd;
+			public final CooldownEngine cd;
 			private final ChannelEngine ch;
 
 			public Instance(Player player) {
@@ -494,7 +503,7 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public String getName() {
-				return "Trueshot Barrage";
+				return format("\u00a7fTrueshot Barrage ({})");
 			}
 
 			@Override
@@ -504,7 +513,7 @@ public class HeroEzreal implements IHero {
 						"\u00a76\u00a7lActive:",
 						"\u00a79After gathering energy for 1 second, Ezreal fires an",
 						"\u00a79energy projectile in the target direction, dealing",
-						"\u00a79{350/500/650} \u00a76(+100% Bonus AD) \u00a7a(+90% AP) \u00a79magic damage to enemies",
+						"\u00a79{350|500|650} \u00a76(+100% Bonus AD) \u00a7a(+90% AP) \u00a79magic damage to enemies",
 						"\u00a79it passes through. Each enemy hit reduces the projectile's",
 						"\u00a79damage by 10%, down to a minimum 30% damage."
 				);
@@ -527,9 +536,9 @@ public class HeroEzreal implements IHero {
 
 			@Override
 			public void onInteract(PlayerInteractEvent event) {
-				if (cd.offCooldown()) {
+				if (cd.offCooldown() && !ch.isChanneling()) {
 					if (Stats.expendMana(pl, 100)) {
-						ch.channel(20L).setInterruptible(false).onComplete(() -> new Missile(pl.getLocation()).dispatch()); // TODO sfx
+						ch.channel(20L).setInterruptible(false).onComplete(() -> new Missile(pl.getEyeLocation()).dispatch()); // TODO sfx
 						cd.cooldown(2400L);
 					}
 					else
@@ -541,23 +550,25 @@ public class HeroEzreal implements IHero {
 
 			private class Missile extends SpellProjectile {
 
+				private final Set<UUID> seen;
+
 				private Missile(Location loc) {
 					super(loc, loc.getDirection().setY(0).normalize().multiply(0.5D), 1.36D, pl.getUniqueId(), CollisionCriteria.ENTITY);
+					seen = new HashSet<>();
 				}
 
 				@Override
 				public void onHit(CollisionCriteria col, List<Entity> ents) {
-					Set<UUID> seen = new HashSet<>();
 					ents.stream()
 							.filter(e -> e instanceof LivingEntity && !seen.contains(e.getUniqueId())) // TODO Check if target is on own team
-							.peek(e -> seen.add(e.getUniqueId()))
 							.map(e -> (LivingEntity)e)
 							.forEach(e -> {
-								double mult = Math.max(1.1D - 0.1D * seen.size() - 1, 0.3D);
+								double mult = Math.max(1D - 0.1D * seen.size(), 0.3D);
 								new Damage((mult * (350 + 150 * level)), Damage.DamageType.MAGIC)
 										.withDmg(Stats.BONUS_AD, mult)
 										.withDmg(Stats.AP, mult * 0.9D)
 										.deal(pl, e);
+								seen.add(e.getUniqueId());
 							});
 				}
 
@@ -569,7 +580,7 @@ public class HeroEzreal implements IHero {
 					for (int i = -1; i <= 1; i++)
 						ParticleUtils.dispatchEffect(getLocation().add(perp.multiply(i)), EnumWrappers.Particle.CRIT, 6, 0.5F);
 					ParticleUtils.dispatchEffect(getLocation(), EnumWrappers.Particle.ENCHANTMENT_TABLE, 8, 1.36F);
-					if (getTimeAlive() > 900L)
+					if (getTimeAlive() > 256L)
 						kill();
 				}
 

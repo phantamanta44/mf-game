@@ -17,21 +17,23 @@ import io.github.phantamanta44.mobafort.weaponize.stat.Stats;
 import io.github.phantamanta44.mobafort.weaponize.weapon.IWeapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class AutoAttackSpell implements IAutoAttackSpell {
 
 	public static final AutoAttackSpell INSTANCE = new AutoAttackSpell();
-	public static final ItemSig ITEM_SIG = new ItemSig(Material.STONE);
+	public static final ItemSig TYPE = new ItemSig(Material.RECORD_12);
 
 	@Override
 	public ItemSig getType() {
-		return ITEM_SIG;
+		return TYPE;
 	}
 
 	@Override
@@ -82,7 +84,14 @@ public class AutoAttackSpell implements IAutoAttackSpell {
 				RayTrace trace = new RayTrace(pl, kit.getAutoAttackRange(), (int)Math.ceil(kit.getAutoAttackRange()));
 				Object target = null;
 				for (Location loc : trace) {
-					// TODO Target selection
+					Optional<Entity> ent = loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5).stream()
+							.filter(e -> e instanceof LivingEntity && !e.equals(pl))
+							.findFirst();
+					if (ent.isPresent()) {
+						target = ent.get();
+						break;
+					}
+					// TODO Team-based target selection
 				}
 				if (target != null) { // TODO sfx
 					if (kit.isMelee()) {
