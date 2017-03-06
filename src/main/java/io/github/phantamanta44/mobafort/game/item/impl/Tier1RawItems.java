@@ -47,7 +47,7 @@ public class Tier1RawItems {
 
 	public static class SteelOrb extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.GOLD_INGOT);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1steelorb", NAME = "\u00a7rSteel Orb";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+12% Critical Strike Chance");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -62,7 +62,7 @@ public class Tier1RawItems {
 
 	public static class SteelRod extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.GOLD_INGOT);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1steelrod", NAME = "\u00a7rSteel Rod";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+24 Attack Damage");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -77,7 +77,7 @@ public class Tier1RawItems {
 
 	public static class BarbedWire extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.GOLD_INGOT);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1barbedwire", NAME = "\u00a7rBarbed Wire";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+5% Critical Strike Damage");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -107,7 +107,7 @@ public class Tier1RawItems {
 
 	public static class Timepiece extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BRICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1timepiece", NAME = "\u00a7rTimepiece";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+5% Cooldown Reduction");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -122,7 +122,7 @@ public class Tier1RawItems {
 
 	public static class BasinStone extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BRICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1basin", NAME = "\u00a7rBasin Stone";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+250 Mana");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -137,7 +137,7 @@ public class Tier1RawItems {
 
 	public static class LookingGlass extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BRICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1manamirror", NAME = "\u00a7rLooking Glass";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+50% Mana Regeneration");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -152,7 +152,7 @@ public class Tier1RawItems {
 
 	public static class ElderStaff extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BRICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1estaff", NAME = "\u00a7rElder Staff";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+32 Ability Power");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -167,7 +167,7 @@ public class Tier1RawItems {
 
 	public static class LeatherGloves extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.LEATHER);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1gloves", NAME = "\u00a7rLeather Gloves";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+15 Armour");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -182,7 +182,7 @@ public class Tier1RawItems {
 
 	public static class Cloak extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BRICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1cloak", NAME = "\u00a7rCloak";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+10 Magic Resist");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -197,7 +197,7 @@ public class Tier1RawItems {
 
 	public static class BloodVial extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.GOLD_INGOT);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1bloodvial", NAME = "\u00a7rSanguine Vial";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+150 Health");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -212,7 +212,7 @@ public class Tier1RawItems {
 
 	public static class LifeSlice extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BRICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1lifeslice", NAME = "\u00a7rSlice of Life";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+36% Health Regeneration");
 		private static final ProvidedStat[] STATS = new ProvidedStat[] {
@@ -227,7 +227,7 @@ public class Tier1RawItems {
 
 	public static class Lodestone extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BRICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "1lodestone", NAME = "\u00a7rLodestone";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+25% Health Regeneration",

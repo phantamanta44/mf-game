@@ -85,7 +85,7 @@ public class Tier2RawItems {
 
 	public static class WindBite extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.STICK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2windbite", NAME = "\u00a7rWind's Bite";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+15% Attack Speed",
@@ -146,7 +146,7 @@ public class Tier2RawItems {
 
 	public static class CrystalMech extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.BLAZE_POWDER);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2crystalmech", NAME = "\u00a7rCrystalline Mechanism";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+10% Cooldown Reduction",
@@ -184,7 +184,7 @@ public class Tier2RawItems {
 
 	public static class PrismSphere extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.BONE);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2prismsphere", NAME = "\u00a7rPrismatic Sphere";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+20 Ability Power",
@@ -268,7 +268,7 @@ public class Tier2RawItems {
 
 	public static class MassiveGauntlet extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.INK_SACK);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2massivegauntlet", NAME = "\u00a7rMassive Gauntlet";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+30 Armour",
@@ -287,7 +287,7 @@ public class Tier2RawItems {
 
 	public static class EnergyVoid extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.FEATHER);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2energyvoid", NAME = "\u00a7rEnergetic Void";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+300 Mana",
@@ -346,7 +346,7 @@ public class Tier2RawItems {
 
 	public static class LifeFlask extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.CLAY_BALL);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2lifeflask", NAME = "\u00a7rVictuum Flask";
 		private static final List<String> LORE = Collections.singletonList("\u00a7a+500 Health");
 		private static final ProvidedStat[] STATS = new ProvidedStat[]{
@@ -380,7 +380,7 @@ public class Tier2RawItems {
 
 	public static class CritCape extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.PAPER);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2critcape", NAME = "\u00a7rMarauder's Cape";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+18 Armour",
@@ -401,7 +401,7 @@ public class Tier2RawItems {
 
 	public static class TalismanChain extends BasicStatItem {
 
-		public static final ItemSig SIG = new ItemSig(Material.BOWL);
+		public static final ItemSig SIG = new ItemSig(FreeItems.next());
 		public static final String ID = "2talismanchain", NAME = "\u00a7rTalisman Chain";
 		private static final List<String> LORE = Arrays.asList(
 				"\u00a7a+36 Ability Power",
