@@ -7,6 +7,6 @@ import java.util.Collection;
 @FunctionalInterface
 public interface IBaseStats {
 
-	Collection<ProvidedStat<?>> getStats(int level);
+    Collection<ProvidedStat<?>> getStats(int level);
 
 }

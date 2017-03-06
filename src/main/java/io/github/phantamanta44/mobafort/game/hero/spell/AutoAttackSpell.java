@@ -28,109 +28,109 @@ import java.util.Optional;
 
 public class AutoAttackSpell implements IAutoAttackSpell {
 
-	public static final AutoAttackSpell INSTANCE = new AutoAttackSpell();
-	public static final ItemSig TYPE = new ItemSig(Material.RECORD_12);
+    public static final AutoAttackSpell INSTANCE = new AutoAttackSpell();
+    public static final ItemSig TYPE = new ItemSig(Material.RECORD_12);
 
-	@Override
-	public ItemSig getType() {
-		return TYPE;
-	}
+    @Override
+    public ItemSig getType() {
+        return TYPE;
+    }
 
-	@Override
-	public IWeaponInstance instantiate(Player player) {
-		return new Instance(player);
-	}
+    @Override
+    public IWeaponInstance instantiate(Player player) {
+        return new Instance(player);
+    }
 
-	public static class Instance implements IWeaponInstance {
+    public static class Instance implements IWeaponInstance {
 
-		private final Player pl;
-		private final HeroKit kit;
-		private final CooldownEngine cd;
+        private final Player pl;
+        private final HeroKit kit;
+        private final CooldownEngine cd;
 
-		public Instance(Player player) {
-			this.pl = player;
-			this.kit = GamePlugin.getEngine().getPlayer(pl).getHero().getKit();
-			this.cd = new CooldownEngine(pl, false);
-		}
+        public Instance(Player player) {
+            this.pl = player;
+            this.kit = GamePlugin.getEngine().getPlayer(pl).getHero().getKit();
+            this.cd = new CooldownEngine(pl, false);
+        }
 
-		@Override
-		public String getName() {
-			return "Basic Attack";
-		}
+        @Override
+        public String getName() {
+            return "Basic Attack";
+        }
 
-		@Override
-		public List<String> getLore() {
-			return Collections.emptyList();
-		}
+        @Override
+        public List<String> getLore() {
+            return Collections.emptyList();
+        }
 
-		@Override
-		public int getStackSize() {
-			return 1;
-		}
+        @Override
+        public int getStackSize() {
+            return 1;
+        }
 
-		@Override
-		public String getHudInfo() {
-			return cd.offCooldown() ? null : cd.getBarRepresentation();
-		}
+        @Override
+        public String getHudInfo() {
+            return cd.offCooldown() ? null : cd.getBarRepresentation();
+        }
 
-		@Override
-		public IWeapon getTemplate() {
-			return INSTANCE;
-		}
+        @Override
+        public IWeapon getTemplate() {
+            return INSTANCE;
+        }
 
-		@Override
-		public void onInteract(PlayerInteractEvent event) {
-			if (cd.offCooldown()) {
-				RayTrace trace = new RayTrace(pl, kit.getAutoAttackRange(), (int)Math.ceil(kit.getAutoAttackRange()));
-				Object target = null;
-				for (Location loc : trace) {
-					Optional<Entity> ent = loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5).stream()
-							.filter(e -> e instanceof LivingEntity && !e.equals(pl))
-							.findFirst();
-					if (ent.isPresent()) {
-						target = ent.get();
-						break;
-					}
-					// TODO Team-based target selection
-				}
-				if (target != null) { // TODO sfx
-					if (kit.isMelee()) {
-						LivingEntity leTgt = null;
-						if (target instanceof LivingEntity)
-							leTgt = (LivingEntity)target;
-						else if (target instanceof Structure)
-							leTgt = ((Structure)target).getDamageBuffer();
-						else
-							throw new IllegalStateException();
-						Damage dmg = new Damage(StatTracker.getStat(pl, Stats.AD).getValue(), Damage.DamageType.PHYSICAL);
-						MobaEventAutoAttack aaEvent = MobaEventAutoAttack.fire(pl, leTgt, dmg);
-						if (!aaEvent.isCancelled()) {
-							dmg.deal(pl, leTgt);
-							Location loc = pl.getLocation();
-							ParticleUtils.dispatchEffect(loc.add(loc.getDirection()), EnumWrappers.Particle.SWEEP_ATTACK, 2);
-						}
-					} else {
-						if (target instanceof LivingEntity)
-							new AutoAttackMissile(pl, (LivingEntity)target, kit).dispatch();
-						else if (target instanceof Structure)
-							new AutoAttackMissile(pl, (Structure)target, kit).dispatch();
-					}
-					AnimUtils.swingArm(pl);
-					cd.cooldown((long)(Math.pow(Math.min(StatTracker.getStat(pl, Stats.AS).getValue(), 2.5D), -1D) * 20D));
-				}
-			}
-		}
+        @Override
+        public void onInteract(PlayerInteractEvent event) {
+            if (cd.offCooldown()) {
+                RayTrace trace = new RayTrace(pl, kit.getAutoAttackRange(), (int)Math.ceil(kit.getAutoAttackRange()));
+                Object target = null;
+                for (Location loc : trace) {
+                    Optional<Entity> ent = loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5).stream()
+                            .filter(e -> e instanceof LivingEntity && !e.equals(pl))
+                            .findFirst();
+                    if (ent.isPresent()) {
+                        target = ent.get();
+                        break;
+                    }
+                    // TODO Team-based target selection
+                }
+                if (target != null) { // TODO sfx
+                    if (kit.isMelee()) {
+                        LivingEntity leTgt = null;
+                        if (target instanceof LivingEntity)
+                            leTgt = (LivingEntity)target;
+                        else if (target instanceof Structure)
+                            leTgt = ((Structure)target).getDamageBuffer();
+                        else
+                            throw new IllegalStateException();
+                        Damage dmg = new Damage(StatTracker.getStat(pl, Stats.AD).getValue(), Damage.DamageType.PHYSICAL);
+                        MobaEventAutoAttack aaEvent = MobaEventAutoAttack.fire(pl, leTgt, dmg);
+                        if (!aaEvent.isCancelled()) {
+                            dmg.deal(pl, leTgt);
+                            Location loc = pl.getLocation();
+                            ParticleUtils.dispatchEffect(loc.add(loc.getDirection()), EnumWrappers.Particle.SWEEP_ATTACK, 2);
+                        }
+                    } else {
+                        if (target instanceof LivingEntity)
+                            new AutoAttackMissile(pl, (LivingEntity)target, kit).dispatch();
+                        else if (target instanceof Structure)
+                            new AutoAttackMissile(pl, (Structure)target, kit).dispatch();
+                    }
+                    AnimUtils.swingArm(pl);
+                    cd.cooldown((long)(Math.pow(Math.min(StatTracker.getStat(pl, Stats.AS).getValue(), 2.5D), -1D) * 20D));
+                }
+            }
+        }
 
-		@Override
-		public void tick(long tick) {
-			// NO-OP
-		}
+        @Override
+        public void tick(long tick) {
+            // NO-OP
+        }
 
-		@Override
-		public void kill() {
-			// NO-OP
-		}
+        @Override
+        public void kill() {
+            // NO-OP
+        }
 
-	}
+    }
 
 }

@@ -17,46 +17,46 @@ import java.util.function.Supplier;
 
 public class AutoAttackMissile extends HomingMissile {
 
-	private final LivingEntity tgt;
-	private final HeroKit srcKit;
-	private final Supplier<Vector> tgtPosGetter;
+    private final LivingEntity tgt;
+    private final HeroKit srcKit;
+    private final Supplier<Vector> tgtPosGetter;
 
-	public AutoAttackMissile(Player src, LivingEntity tgt, HeroKit srcKit) {
-		super(src.getLocation(), srcKit.getAutoAttackSpeed(), 0D, src.getUniqueId(), CollisionCriteria.NONE);
-		this.tgt = tgt;
-		this.srcKit = srcKit;
-		this.tgtPosGetter = () -> tgt.getLocation().toVector();
-	}
+    public AutoAttackMissile(Player src, LivingEntity tgt, HeroKit srcKit) {
+        super(src.getLocation(), srcKit.getAutoAttackSpeed(), 0D, src.getUniqueId(), CollisionCriteria.NONE);
+        this.tgt = tgt;
+        this.srcKit = srcKit;
+        this.tgtPosGetter = () -> tgt.getLocation().toVector();
+    }
 
-	public AutoAttackMissile(Player src, Structure tgt, HeroKit srcKit) {
-		super(src.getLocation(), srcKit.getAutoAttackSpeed(), 0D, src.getUniqueId(), CollisionCriteria.NONE);
-		this.tgt = tgt.getDamageBuffer();
-		this.srcKit = srcKit;
-		this.tgtPosGetter = () -> tgt.getBounds().getBasePos();
-	}
+    public AutoAttackMissile(Player src, Structure tgt, HeroKit srcKit) {
+        super(src.getLocation(), srcKit.getAutoAttackSpeed(), 0D, src.getUniqueId(), CollisionCriteria.NONE);
+        this.tgt = tgt.getDamageBuffer();
+        this.srcKit = srcKit;
+        this.tgtPosGetter = () -> tgt.getBounds().getBasePos();
+    }
 
-	@Override
-	public void tick(long tick) {
-		srcKit.autoAttackEffects(this, tick);
-	}
+    @Override
+    public void tick(long tick) {
+        srcKit.autoAttackEffects(this, tick);
+    }
 
-	@Override
-	protected Vector getTarget() {
-		return tgtPosGetter.get();
-	}
+    @Override
+    protected Vector getTarget() {
+        return tgtPosGetter.get();
+    }
 
-	@Override
-	public void onHit(CollisionCriteria col, List<Entity> ents) {
-		// NO-OP
-	}
+    @Override
+    public void onHit(CollisionCriteria col, List<Entity> ents) {
+        // NO-OP
+    }
 
-	@Override
-	public void onReachTarget() {
-		Player src = Bukkit.getServer().getPlayer(getSource());
-		Damage dmg = new Damage(StatTracker.getStat(src, Stats.AD).getValue(), Damage.DamageType.PHYSICAL);
-		MobaEventAutoAttack event = MobaEventAutoAttack.fire(src, tgt, dmg);
-		if (!event.isCancelled())
-			dmg.deal(src, tgt);
-	}
+    @Override
+    public void onReachTarget() {
+        Player src = Bukkit.getServer().getPlayer(getSource());
+        Damage dmg = new Damage(StatTracker.getStat(src, Stats.AD).getValue(), Damage.DamageType.PHYSICAL);
+        MobaEventAutoAttack event = MobaEventAutoAttack.fire(src, tgt, dmg);
+        if (!event.isCancelled())
+            dmg.deal(src, tgt);
+    }
 
 }

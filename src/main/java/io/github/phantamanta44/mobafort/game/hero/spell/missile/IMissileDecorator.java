@@ -5,6 +5,6 @@ import io.github.phantamanta44.mobafort.weaponize.projectile.SpellProjectile;
 @FunctionalInterface
 public interface IMissileDecorator<T extends SpellProjectile> {
 
-	void apply(T proj, long tick);
+    void apply(T proj, long tick);
 
 }

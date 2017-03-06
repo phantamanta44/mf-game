@@ -16,42 +16,42 @@ import org.bukkit.inventory.ItemStack;
 
 public class InventoryManipulationHandler implements Listener {
 
-	@EventHandler
-	public void onHandSwap(PlayerSwapHandItemsEvent event) {
-		event.setCancelled(true);
-	}
+    @EventHandler
+    public void onHandSwap(PlayerSwapHandItemsEvent event) {
+        event.setCancelled(true);
+    }
 
-	@EventHandler
-	public void onDrop(PlayerDropItemEvent event) {
-		event.setCancelled(true);
-	}
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        event.setCancelled(true);
+    }
 
-	@EventHandler
-	public void onInvInteract(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player))
-			return;
-		Player pl = (Player)event.getWhoClicked();
-		if (GamePlugin.getEngine().isInGame(pl) && isAllowedSlot(event.getRawSlot()))
-			return;
-		event.setCancelled(true);
-	}
+    @EventHandler
+    public void onInvInteract(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
+        Player pl = (Player)event.getWhoClicked();
+        if (GamePlugin.getEngine().isInGame(pl) && isAllowedSlot(event.getRawSlot()))
+            return;
+        event.setCancelled(true);
+    }
 
-	@EventHandler
-	public void onSlotChange(PlayerItemHeldEvent event) {
-		Player pl = event.getPlayer();
-		if (!GamePlugin.getEngine().isInGame(pl))
-			return;
-		event.setCancelled(true);
-		int slot = event.getNewSlot();
-		if (slot != 8) {
-			ItemStack stack = pl.getInventory().getItem(slot);
-			if (stack != null)
-				Bukkit.getServer().getPluginManager().callEvent(new PlayerInteractEvent(pl, Action.RIGHT_CLICK_AIR, stack, null, null));
-		}
-	}
+    @EventHandler
+    public void onSlotChange(PlayerItemHeldEvent event) {
+        Player pl = event.getPlayer();
+        if (!GamePlugin.getEngine().isInGame(pl))
+            return;
+        event.setCancelled(true);
+        int slot = event.getNewSlot();
+        if (slot != 8) {
+            ItemStack stack = pl.getInventory().getItem(slot);
+            if (stack != null)
+                Bukkit.getServer().getPluginManager().callEvent(new PlayerInteractEvent(pl, Action.RIGHT_CLICK_AIR, stack, null, null));
+        }
+    }
 
-	private static boolean isAllowedSlot(int slotId) {
-		return MathUtils.withinBounds(slotId, 4, 6) || MathUtils.withinBounds(slotId, 31, 33);
-	}
+    private static boolean isAllowedSlot(int slotId) {
+        return MathUtils.withinBounds(slotId, 4, 6) || MathUtils.withinBounds(slotId, 31, 33);
+    }
 
 }

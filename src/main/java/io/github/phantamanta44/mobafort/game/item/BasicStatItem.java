@@ -14,38 +14,38 @@ import java.util.Map;
 
 public abstract class BasicStatItem extends AbstractItem {
 
-	private final List<ProvidedStat<?>> stats;
-	private final String name;
-	private final List<String> lore;
+    private final List<ProvidedStat<?>> stats;
+    private final String name;
+    private final List<String> lore;
 
-	public BasicStatItem(String id, ItemSig sig, String name, List<String> lore, ProvidedStat<?>... stats) {
-		super(id, sig);
-		this.name = name;
-		this.lore = lore;
-		this.stats = Arrays.asList(stats);
-	}
+    public BasicStatItem(String id, ItemSig sig, String name, List<String> lore, ProvidedStat<?>... stats) {
+        super(id, sig);
+        this.name = name;
+        this.lore = lore;
+        this.stats = Arrays.asList(stats);
+    }
 
-	@Override
-	public void initialize(Player player, ItemStack stack) {
-		ItemMeta meta = Bukkit.getServer().getItemFactory().getItemMeta(stack.getType());
-		meta.setDisplayName(name);
-		meta.setLore(lore);
-		stack.setItemMeta(meta);
-	}
+    @Override
+    public void initialize(Player player, ItemStack stack) {
+        ItemMeta meta = Bukkit.getServer().getItemFactory().getItemMeta(stack.getType());
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        stack.setItemMeta(meta);
+    }
 
-	@Override
-	public void update(long l, Player player, ItemStack stack) {
-		// NO-OP
-	}
+    @Override
+    public void update(long l, Player player, ItemStack stack) {
+        // NO-OP
+    }
 
-	@Override
-	public List<ProvidedStat<?>> getCommonStats(Player player, ItemStack stack) {
-		return stats;
-	}
+    @Override
+    public List<ProvidedStat<?>> getCommonStats(Player player, ItemStack stack) {
+        return stats;
+    }
 
-	@Override
-	public Map<String, ProvidedStat<?>> getUniqueStats(Player player, ItemStack itemStack) {
-		return Collections.emptyMap();
-	}
+    @Override
+    public Map<String, ProvidedStat<?>> getUniqueStats(Player player, ItemStack itemStack) {
+        return Collections.emptyMap();
+    }
 
 }

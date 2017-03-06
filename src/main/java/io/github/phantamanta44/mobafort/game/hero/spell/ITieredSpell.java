@@ -12,57 +12,57 @@ import java.util.stream.Collectors;
 
 public interface ITieredSpell extends IWeapon {
 
-	TieredSpellInstance instantiate(Player player);
+    TieredSpellInstance instantiate(Player player);
 
-	abstract class TieredSpellInstance implements IWeaponInstance {
+    abstract class TieredSpellInstance implements IWeaponInstance {
 
-		private static final Pattern STR_TKN_PTN = Pattern.compile("\\{(.*?)}");
+        private static final Pattern STR_TKN_PTN = Pattern.compile("\\{(.*?)}");
 
-		protected int level = 0;
+        protected int level = 0;
 
-		public void setLevel(int l) {
-			this.level = l;
-		}
+        public void setLevel(int l) {
+            this.level = l;
+        }
 
-		public int getLevel() {
-			return level;
-		}
+        public int getLevel() {
+            return level;
+        }
 
-		@Override
-		public void tick(long tick) {
-			// NO-OP
-		}
+        @Override
+        public void tick(long tick) {
+            // NO-OP
+        }
 
-		@Override
-		public void kill() {
-			// NO-OP
-		}
+        @Override
+        public void kill() {
+            // NO-OP
+        }
 
-		protected List<String> format(String... parts) {
-			return Arrays.stream(parts)
-					.map(this::format)
-					.collect(Collectors.toList());
-		}
+        protected List<String> format(String... parts) {
+            return Arrays.stream(parts)
+                    .map(this::format)
+                    .collect(Collectors.toList());
+        }
 
-		protected String format(String str) {
-			Matcher m = STR_TKN_PTN.matcher(str);
-			StringBuffer sb = new StringBuffer();
-			while (m.find())
-				m.appendReplacement(sb, expandFmt(m.group(1)));
-			m.appendTail(sb);
-			return sb.toString();
-		}
+        protected String format(String str) {
+            Matcher m = STR_TKN_PTN.matcher(str);
+            StringBuffer sb = new StringBuffer();
+            while (m.find())
+                m.appendReplacement(sb, expandFmt(m.group(1)));
+            m.appendTail(sb);
+            return sb.toString();
+        }
 
-		protected String expandFmt(String fmt) {
-			if (fmt.contains("|")) {
-				int end = StringUtils.nthOccurence(fmt, '|', level + 1);
-				return fmt.substring(StringUtils.nthOccurence(fmt, '|', level) + 1, end != -1 ? end : fmt.length());
-			}
-			else if (fmt.isEmpty())
-				return Integer.toString(level + 1);
-			return fmt;
-		}
+        protected String expandFmt(String fmt) {
+            if (fmt.contains("|")) {
+                int end = StringUtils.nthOccurence(fmt, '|', level + 1);
+                return fmt.substring(StringUtils.nthOccurence(fmt, '|', level) + 1, end != -1 ? end : fmt.length());
+            }
+            else if (fmt.isEmpty())
+                return Integer.toString(level + 1);
+            return fmt;
+        }
 
-	}
+    }
 
 }

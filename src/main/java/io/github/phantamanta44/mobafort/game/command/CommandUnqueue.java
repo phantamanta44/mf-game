@@ -9,17 +9,17 @@ import org.bukkit.entity.Player;
 
 public class CommandUnqueue implements CommandExecutor {
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender instanceof Player) {
-			Player pl = (Player)sender;
-			if (GamePlugin.getEngine().dequeue(pl))
-				Announcer.player("You were removed from the queue.", pl);
-			else
-				Announcer.player("You aren't in the queue.", pl);
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player pl = (Player)sender;
+            if (GamePlugin.getEngine().dequeue(pl))
+                Announcer.player("You were removed from the queue.", pl);
+            else
+                Announcer.player("You aren't in the queue.", pl);
+            return true;
+        }
+        return false;
+    }
 
 }

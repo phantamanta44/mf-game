@@ -5,26 +5,26 @@ import org.bukkit.entity.LivingEntity;
 
 public abstract class Structure {
 
-	private final CylBounds bounds;
+    private final CylBounds bounds;
 
-	public Structure(CylBounds bounds) {
-		this.bounds = bounds;
-	}
+    public Structure(CylBounds bounds) {
+        this.bounds = bounds;
+    }
 
-	public abstract BlockBuild getBlocks();
+    public abstract BlockBuild getBlocks();
 
-	public abstract void tick(long tick);
+    public abstract void tick(long tick);
 
-	public CylBounds getBounds() {
-		return bounds;
-	}
+    public CylBounds getBounds() {
+        return bounds;
+    }
 
-	public boolean isTargetable() {
-		return false;
-	}
+    public boolean isTargetable() {
+        return false;
+    }
 
-	public LivingEntity getDamageBuffer() {
-		throw new UnsupportedOperationException();
-	}
+    public LivingEntity getDamageBuffer() {
+        throw new UnsupportedOperationException();
+    }
 
 }

@@ -21,55 +21,55 @@ import java.util.stream.StreamSupport;
 
 public class MapLoader {
 
-	private static final List<MapProvider> loaded = new ArrayList<>();
+    private static final List<MapProvider> loaded = new ArrayList<>();
 
-	public static void load(File file) {
-		JsonParser parser = new JsonParser();
-		try (FileReader strIn = new FileReader(file)) {
-			JsonArray data = parser.parse(strIn).getAsJsonArray();
-			StreamSupport.stream(data.spliterator(), false)
-					.map(JsonElement::getAsJsonObject)
-					.forEach(d -> {
-						MapProvider map = new MapProvider(
-								Bukkit.getServer().getWorld(d.get("world").getAsString()),
-								SerUtils.deserVector(d.get("redSpawn").getAsJsonObject()),
-								SerUtils.deserVector(d.get("blueSpawn").getAsJsonObject())
-						);
-						d.get("redTowers").getAsJsonObject().entrySet().forEach(e -> {
-							Lane lane = Lane.valueOf(e.getKey());
-							e.getValue().getAsJsonArray().forEach(tElem -> {
-								JsonObject tDto = tElem.getAsJsonObject();
-								Vector base = SerUtils.deserVector(tDto.get("basePos").getAsJsonObject());
-								StructTower.TowerType type = StructTower.TowerType.valueOf(tDto.get("type").getAsString());
-								map.addRedTower(lane, () -> new StructTower(
-										base, type, Team.RED, null, null, null, null, lane != Lane.BOT // TODO Finish implementation
-								));
-							});
-						});
-						d.get("blueTowers").getAsJsonObject().entrySet().forEach(e -> {
-							Lane lane = Lane.valueOf(e.getKey());
-							e.getValue().getAsJsonArray().forEach(tElem -> {
-								JsonObject tDto = tElem.getAsJsonObject();
-								Vector base = SerUtils.deserVector(tDto.get("basePos").getAsJsonObject());
-								StructTower.TowerType type = StructTower.TowerType.valueOf(tDto.get("type").getAsString());
-								map.addRedTower(lane, () -> new StructTower(
-										base, type, Team.BLUE, null, null, null, null, lane != Lane.BOT // TODO Finish implementation
-								));
-							});
-						});
-						loaded.add(map);
-					});
-		} catch (IOException | IllegalStateException e) {
-			e.printStackTrace();
-		}
-	}
+    public static void load(File file) {
+        JsonParser parser = new JsonParser();
+        try (FileReader strIn = new FileReader(file)) {
+            JsonArray data = parser.parse(strIn).getAsJsonArray();
+            StreamSupport.stream(data.spliterator(), false)
+                    .map(JsonElement::getAsJsonObject)
+                    .forEach(d -> {
+                        MapProvider map = new MapProvider(
+                                Bukkit.getServer().getWorld(d.get("world").getAsString()),
+                                SerUtils.deserVector(d.get("redSpawn").getAsJsonObject()),
+                                SerUtils.deserVector(d.get("blueSpawn").getAsJsonObject())
+                        );
+                        d.get("redTowers").getAsJsonObject().entrySet().forEach(e -> {
+                            Lane lane = Lane.valueOf(e.getKey());
+                            e.getValue().getAsJsonArray().forEach(tElem -> {
+                                JsonObject tDto = tElem.getAsJsonObject();
+                                Vector base = SerUtils.deserVector(tDto.get("basePos").getAsJsonObject());
+                                StructTower.TowerType type = StructTower.TowerType.valueOf(tDto.get("type").getAsString());
+                                map.addRedTower(lane, () -> new StructTower(
+                                        base, type, Team.RED, null, null, null, null, lane != Lane.BOT // TODO Finish implementation
+                                ));
+                            });
+                        });
+                        d.get("blueTowers").getAsJsonObject().entrySet().forEach(e -> {
+                            Lane lane = Lane.valueOf(e.getKey());
+                            e.getValue().getAsJsonArray().forEach(tElem -> {
+                                JsonObject tDto = tElem.getAsJsonObject();
+                                Vector base = SerUtils.deserVector(tDto.get("basePos").getAsJsonObject());
+                                StructTower.TowerType type = StructTower.TowerType.valueOf(tDto.get("type").getAsString());
+                                map.addRedTower(lane, () -> new StructTower(
+                                        base, type, Team.BLUE, null, null, null, null, lane != Lane.BOT // TODO Finish implementation
+                                ));
+                            });
+                        });
+                        loaded.add(map);
+                    });
+        } catch (IOException | IllegalStateException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static MapProvider random() {
-		return CollectionUtils.random(loaded);
-	}
+    public static MapProvider random() {
+        return CollectionUtils.random(loaded);
+    }
 
-	public static List<MapProvider> getMaps() {
-		return loaded;
-	}
+    public static List<MapProvider> getMaps() {
+        return loaded;
+    }
 
 }

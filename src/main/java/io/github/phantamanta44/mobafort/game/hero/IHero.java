@@ -4,14 +4,14 @@ import io.github.phantamanta44.mobafort.lib.item.ItemSig;
 
 public interface IHero {
 
-	String getName();
+    String getName();
 
-	ItemSig getIcon();
+    ItemSig getIcon();
 
-	HeroClass getHeroClass();
+    HeroClass getHeroClass();
 
-	IBaseStats getStats();
+    IBaseStats getStats();
 
-	HeroKit getKit();
+    HeroKit getKit();
 
 }
