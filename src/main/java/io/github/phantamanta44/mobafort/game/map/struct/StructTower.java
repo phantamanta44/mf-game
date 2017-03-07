@@ -2,6 +2,7 @@ package io.github.phantamanta44.mobafort.game.map.struct;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import io.github.phantamanta44.mobafort.game.GamePlugin;
+import io.github.phantamanta44.mobafort.game.game.Announcer;
 import io.github.phantamanta44.mobafort.game.game.Team;
 import io.github.phantamanta44.mobafort.game.hero.spell.missile.HomingMissile;
 import io.github.phantamanta44.mobafort.game.util.StattedDamageDummy;
@@ -60,24 +61,26 @@ public class StructTower extends Structure {
 
     @Override
     public void tick(long gameTick) {
-        if (gameTick % 20L == 0L) {
-            hp.setHealth(Math.max(hp.getHealth() + type.hpGen, hp.getMaxHealth()));
-            if (gameTick == 6000L)
-                fort = false;
-        }
-        if (gameTick % 1200L == 1199L) {
-            hp.clearStats(true);
-            hp.addStats(type.statProvider.apply((int)((gameTick + 1L) / 1200L)));
-        }
-        World world = GamePlugin.getEngine().getMap().getWorld();
-        if (gameTick - lastShot >= 24L) {
-            LivingEntity target = world.getNearbyEntities(getBounds().getBasePos().toLocation(world), RANGE, RANGE, RANGE).stream()
-                    .filter(e -> e instanceof LivingEntity) // TODO Attack prioritization
-                    .map(e -> (LivingEntity)e) // TODO Don't attack own team
-                    .findAny().orElse(null);
-            if (target != null) {
-                new PenetratingBullet(this, target).dispatch(); // TODO Bullet sfx
-                lastShot = gameTick;
+        if (hp.getHealth() > 0) {
+            if (gameTick % 20L == 0L) {
+                hp.setHealth(Math.min(hp.getHealth() + type.hpGen, hp.getMaxHealth()));
+                if (gameTick == 6000L)
+                    fort = false;
+            }
+            if (gameTick % 1200L == 1199L) {
+                hp.clearStats(true);
+                hp.addStats(type.statProvider.apply((int)((gameTick + 1L) / 1200L)));
+            }
+            World world = GamePlugin.getEngine().getMap().getWorld();
+            if (gameTick - lastShot >= 24L) {
+                LivingEntity target = world.getNearbyEntities(getBounds().getBasePos().toLocation(world), RANGE, RANGE, RANGE).stream()
+                        .filter(e -> e instanceof LivingEntity) // TODO Attack prioritization
+                        .map(e -> (LivingEntity) e) // TODO Don't attack own team
+                        .findAny().orElse(null);
+                if (target != null) {
+                    new PenetratingBullet(this, target).dispatch(); // TODO Bullet sfx
+                    lastShot = gameTick;
+                }
             }
         }
     }
@@ -104,6 +107,8 @@ public class StructTower extends Structure {
                 if (reinf)
                     dmg /= 3D;
                 super.damage(fort ? dmg / 2D : dmg);
+                if (getHealth() < 1)
+                    Announcer.game(team.tag + " turret has been destroyed!"); // TODO Destruction fx
             }
         };
     }

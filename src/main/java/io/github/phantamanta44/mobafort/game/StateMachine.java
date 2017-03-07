@@ -50,7 +50,7 @@ public class StateMachine implements LongConsumer {
         state = newState;
         switch (state) {
             case QUEUEING:
-                engine.setMap(MapLoader.random());
+                engine.setMap(MapLoader.random().getMap());
                 break;
             case DRAFTING:
                 engine.assignTeams();

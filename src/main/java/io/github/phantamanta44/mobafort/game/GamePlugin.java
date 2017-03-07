@@ -71,6 +71,7 @@ public class GamePlugin extends JavaPlugin {
                     }
                 }).scan();
         WeaponRegistry.register(AutoAttackSpell.INSTANCE);
+        WeaponRegistry.register(testweapon.INSTANCE);
         // TODO Keep a hero registry somewhere
     }
 

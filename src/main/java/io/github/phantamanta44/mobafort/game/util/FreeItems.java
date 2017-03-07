@@ -22,7 +22,8 @@ public class FreeItems {
             Material.SPRUCE_DOOR_ITEM, Material.BIRCH_DOOR_ITEM, Material.JUNGLE_DOOR_ITEM, Material.ACACIA_DOOR_ITEM,
             Material.DARK_OAK_DOOR_ITEM, Material.SPLASH_POTION, Material.TIPPED_ARROW, Material.LINGERING_POTION,
             Material.SHIELD, Material.ELYTRA, Material.BOAT_SPRUCE, Material.BOAT_BIRCH,
-            Material.BOAT_JUNGLE, Material.BOAT_ACACIA, Material.BOAT_DARK_OAK, Material.RECORD_12
+            Material.BOAT_JUNGLE, Material.BOAT_ACACIA, Material.BOAT_DARK_OAK, Material.RECORD_12,
+            Material.POTION
     );
     private static final int maxId = Material.values().length;
     private static int i = Material.STRUCTURE_BLOCK.ordinal();
