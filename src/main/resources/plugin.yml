@@ -11,8 +11,11 @@ commands:
       description: queue for a match
     unqueue:
       usage: '/unqueue'
-      descrition: dequeue for a match
+      description: dequeue for a match
       aliases: dequeue
+    class:
+      usage: '/class'
+      description: select a class
     stats:
       usage: '/stats [player]'
       description: view player stats

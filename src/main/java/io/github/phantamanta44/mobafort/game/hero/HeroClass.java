@@ -5,16 +5,18 @@ import org.bukkit.Material;
 
 public enum HeroClass {
 
-    MARKSMAN(new ItemSig(Material.STONE)),
-    MAGE(new ItemSig(Material.STONE)),
-    ASSASSIN(new ItemSig(Material.STONE)),
-    TANK(new ItemSig(Material.STONE)),
-    BRUISER(new ItemSig(Material.STONE)),
-    SUPPORT(new ItemSig(Material.STONE));
+    MARKSMAN("Marksman", new ItemSig(Material.STONE)),
+    MAGE("Mage", new ItemSig(Material.STONE)),
+    ASSASSIN("Assassin",new ItemSig(Material.STONE)),
+    TANK("Tank", new ItemSig(Material.STONE)),
+    BRUISER("Bruiser", new ItemSig(Material.STONE)),
+    SUPPORT("Support", new ItemSig(Material.STONE));
 
+    public final String name;
     public final ItemSig icon;
 
-    HeroClass(ItemSig icon) {
+    HeroClass(String name, ItemSig icon) {
+        this.name = name;
         this.icon = icon;
     }
 

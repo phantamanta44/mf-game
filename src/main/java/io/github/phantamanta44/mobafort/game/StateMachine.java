@@ -1,6 +1,7 @@
 package io.github.phantamanta44.mobafort.game;
 
 import io.github.phantamanta44.mobafort.game.game.Announcer;
+import io.github.phantamanta44.mobafort.game.game.ClassSelectSession;
 import io.github.phantamanta44.mobafort.game.game.GameEngine;
 import io.github.phantamanta44.mobafort.game.map.MapLoader;
 import io.github.phantamanta44.mobafort.weaponize.Weaponize;
@@ -12,6 +13,7 @@ public class StateMachine implements LongConsumer {
     private GameEngine engine;
     private GameState state;
     private boolean stateChange;
+    private ClassSelectSession classSelect = null;
 
     public StateMachine(GameEngine engine) {
         this.engine = engine;
@@ -24,14 +26,15 @@ public class StateMachine implements LongConsumer {
         switch (state) {
             case QUEUEING:
                 if (!stateChange && tick % 600 == 0)
-                    Announcer.global(String.format("Now queueing... (%d/%d)", engine.queueSize(), 10));
-                if (engine.queueSize() >= 10) // TODO Variable queue sizes
+                    Announcer.system(String.format("Queueing for \u00a7b%s\u00a77... \u00a7f(%d/%d)",
+                            engine.getMap().getProvider().getName(), engine.queueSize(), 10));
+                if (engine.queueSize() >= engine.getMap().getProvider().getTeamSize() * 2)
                     setState(GameState.DRAFTING);
                 break;
             case DRAFTING:
-                // TODO Class/hero selection
-                // TODO Some kind of draft pick mechanism
-                setState(GameState.PLAYING);
+                classSelect.tick(tick);
+                if (classSelect.isAllReady())
+                    setState(GameState.PLAYING);
                 break;
             case PLAYING:
                 engine.tick(tick);
@@ -53,13 +56,17 @@ public class StateMachine implements LongConsumer {
                 engine.setMap(MapLoader.random().getMap());
                 break;
             case DRAFTING:
+                GamePlugin.getLobbies().teleportToDraft();
                 engine.assignTeams();
+                classSelect = new ClassSelectSession(Weaponize.INSTANCE.getTick());
                 break;
             case PLAYING:
+                classSelect.cleanUp();
+                classSelect = null;
                 engine.beginGame(Weaponize.INSTANCE.getTick());
                 break;
             case CONCLUSION:
-                engine.endGame();
+                engine.cleanUp();
                 break;
         }
         stateChange = true;
@@ -67,6 +74,10 @@ public class StateMachine implements LongConsumer {
 
     public GameState getState() {
         return state;
+    }
+
+    public ClassSelectSession getClassSelect() {
+        return classSelect;
     }
 
 }

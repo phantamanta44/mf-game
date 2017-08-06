@@ -1,37 +1,49 @@
 package io.github.phantamanta44.mobafort.game.game;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import io.github.phantamanta44.mobafort.game.GamePlugin;
 import io.github.phantamanta44.mobafort.game.hero.IHero;
 import io.github.phantamanta44.mobafort.game.hero.spell.AutoAttackSpell;
 import io.github.phantamanta44.mobafort.game.hero.spell.ITieredSpell;
-import io.github.phantamanta44.mobafort.game.map.MobaMap;
+import io.github.phantamanta44.mobafort.game.map.IGameMap;
+import io.github.phantamanta44.mobafort.mfrp.stat.StatTracker;
 import io.github.phantamanta44.mobafort.weaponize.event.ItemCheckHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GameEngine {
 
     private Deque<UUID> queue;
-    private Map<UUID, PlayerInfo> players;
-    private MobaMap map;
+    private BiMap<UUID, PlayerInfo> players;
+    private IGameMap map;
+    private DeathManager deathManager;
     private long startTime;
     private boolean gameInProgress;
 
     public GameEngine() {
-        queue = new LinkedList<>();
-        players = new HashMap<>();
+        this.queue = new LinkedList<>();
+        this.players = HashBiMap.create();
+        this.map = null;
+        this.deathManager = new DeathManager();
     }
 
-    public void setMap(MobaMap map) {
+    public void setMap(IGameMap map) {
         this.map = map;
     }
 
-    public MobaMap getMap() {
+    public IGameMap getMap() {
         return map;
     }
 
@@ -48,10 +60,9 @@ public class GameEngine {
     }
 
     public void assignTeams() {
-        Team team = Team.BLUE;
-        for (int i = 0; i < 10; i++) {
-            players.put(queue.pop(), new PlayerInfo(team));
-            team = Team.values()[team.ordinal() ^ 1];
+        for (int i = 0; i < map.getProvider().getTeamSize(); i++) {
+            players.put(queue.pop(), new PlayerInfo(Team.BLUE));
+            players.put(queue.pop(), new PlayerInfo(Team.RED));
         }
     }
 
@@ -59,10 +70,12 @@ public class GameEngine {
         map.reset();
         startTime = tick;
         gameInProgress = true;
-        players.keySet().stream()
-                .map(Bukkit.getServer()::getPlayer)
-                .filter(Objects::nonNull)
-                .forEach(this::initInventory);
+        players().forEach(p -> {
+            initInventory(p);
+            StatTracker.updateBaseStats(p, getPlayer(p).getHero().getStats().getStats(0));
+            p.teleport(map.getSpawn(p));
+            getPlayer(p).engageScoreboard();
+        });
     }
 
     public boolean isInGame() {
@@ -70,32 +83,33 @@ public class GameEngine {
     }
 
     public void tick(long tick) {
-        long gameTime = tick - startTime;
-
-        if (gameTime == 600L)
-            Announcer.global("Minions are now spawning.");
-        else if (gameTime == 6000L)
-            Announcer.global("Towers are now vulnerable.");
-        else if (gameTime == 24000L) {
-            Announcer.global("<monster> has spawned.");
-            // TODO: Spawn some ultimate objective monster
-        }
-
-        if (gameTime >= 600L) {
-            if (gameTime % 600L == 0L)
-                assert true; // TODO: Spawn minion waves
-            if (gameTime % 1800L == 1799L)
-                assert true; // TODO: Level up minions (and monsters?)
-        }
+        long gameTime = tick - startTime; // TODO display level somewhere
+        map.tick(gameTime); // TODO handle gold
+        deathManager.tick(gameTime);
+        Team winner = map.getWinner();
+        if (winner != null)
+            endGame(winner);
     }
 
-    public void endGame() {
-        players.clear();
+    public void endGame(Team winner) {
         gameInProgress = false;
+        players().forEach(p -> p.getInventory().clear());
+        Announcer.system(winner.tag + " wins!"); // TODO make this not lame
+        deathManager.release();
+    }
+
+    public void cleanUp() {
+        getPlayers().forEach(e -> e.getValue().setHero(null));
+        players().forEach(p -> p.setScoreboard(
+                Bukkit.getServer().getScoreboardManager().getMainScoreboard()));
+        GamePlugin.getLobbies().teleportToMain(players().collect(Collectors.toList()));
+        players.clear();
+        map.reset();
+        map.cleanUp();
     }
 
     public void dispose() {
-
+        // NO-OP
     }
 
     public Set<Map.Entry<UUID, PlayerInfo>> getPlayers() {
@@ -112,6 +126,16 @@ public class GameEngine {
         return players.get(player.getUniqueId());
     }
 
+    private UUID getPlayer(PlayerInfo playerInfo) {
+        return players.inverse().get(playerInfo);
+    }
+
+    public Stream<Player> players() {
+        return players.keySet().stream()
+                .map(Bukkit.getServer()::getPlayer)
+                .filter(Objects::nonNull);
+    }
+
     public boolean isInGame(Player player) {
         return players.containsKey(player.getUniqueId());
     }
@@ -125,7 +149,7 @@ public class GameEngine {
         ITieredSpell[] spells = getPlayer(player).getHero().getKit().getSpells();
         for (int i = 0; i <= 3; i++)
             inv.setItem(i, spells[i].getType().construct(1));
-        inv.setItem(7, new ItemStack(Material.TIPPED_ARROW, 1));
+        inv.setItem(7, new ItemStack(Material.TIPPED_ARROW, 1)); // TODO recall item
         inv.setItem(8, AutoAttackSpell.TYPE.construct(1));
         inv.setHeldItemSlot(8);
         updateWeapons(player);
@@ -135,13 +159,40 @@ public class GameEngine {
         new ItemCheckHandler.CheckTask(player.getInventory(), player.getUniqueId()).run();
     }
 
+    public DeathManager getDeathManager() {
+        return deathManager;
+    }
+
     public static class PlayerInfo {
+
+        private final Scoreboard scoreboard;
+        private final Objective sbObj;
+        private final Score sbKills, sbDeaths, sbAssists, sbLevel, sbExp, sbGold;
 
         private Team team;
         private IHero hero;
+        private int kdaK, kdaD, kdaA;
+        private int gold;
+        private int xp;
+        private int level;
 
-        private PlayerInfo(Team team) {
+        private PlayerInfo(Team team) { // TODO leveling abilities
             this.team = team;
+            this.scoreboard = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
+            this.sbObj = scoreboard.registerNewObjective("In-Game", "dummy");
+            this.sbObj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            this.sbKills = sbObj.getScore("Kills");
+            this.sbDeaths = sbObj.getScore("Deaths");
+            this.sbAssists = sbObj.getScore("Assists");
+            this.sbLevel = sbObj.getScore("Level");
+            this.sbExp = sbObj.getScore("Experience");
+            this.sbGold = sbObj.getScore("Gold");
+            this.kdaK = this.kdaD = this.kdaA = 0;
+            this.gold = this.xp = this.level = 0;
+        }
+
+        public void engageScoreboard() {
+            Bukkit.getPlayer(GamePlugin.getEngine().getPlayer(this)).setScoreboard(scoreboard);
         }
 
         public Team getTeam() {
@@ -154,6 +205,42 @@ public class GameEngine {
 
         public IHero getHero() {
             return hero;
+        }
+
+        public void offsetGold(int qty) {
+            gold += qty;
+            sbGold.setScore(qty);
+        }
+
+        public int getGold() {
+            return gold;
+        }
+
+        public void offsetXp(int qty) {
+            xp += qty;
+            int xpForLevel = getXpForLevel(level);
+            if (xpForLevel > 0 && xp >= xpForLevel) {
+                xp %= xpForLevel;
+                StatTracker.updateBaseStats(
+                        Bukkit.getServer().getPlayer(GamePlugin.getEngine().getPlayer(this)),
+                        hero.getStats().getStats(level));
+                if (getXpForLevel(++level) == -1)
+                    xp = 0;
+                sbLevel.setScore(level);
+            }
+            sbExp.setScore(xp);
+        }
+
+        public int getXp() {
+            return xp;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public static int getXpForLevel(int level) {
+            return level >= 17 ? -1 : 280 + level * 100;
         }
 
     }

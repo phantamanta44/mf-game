@@ -4,7 +4,7 @@ import org.bukkit.Material;
 
 import java.util.EnumSet;
 
-public class FreeItems {
+public class FreeItems { // FIXME don't actually use this in production
 
     private static final EnumSet<Material> blacklist = EnumSet.of(
             Material.FLINT_AND_STEEL, Material.BOW, Material.STRING, Material.PAINTING,

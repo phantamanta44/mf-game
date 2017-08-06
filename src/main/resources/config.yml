@@ -1,0 +1,10 @@
+lobby:
+  main:
+    coords: [0, 72, 0]
+    world: world
+  red:
+    coords: [0, 72, 0]
+    world: world
+  blue:
+    coords: [0, 72, 0]
+    world: world

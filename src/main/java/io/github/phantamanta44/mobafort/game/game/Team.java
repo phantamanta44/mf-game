@@ -10,4 +10,8 @@ public enum Team {
         this.tag = tag;
     }
 
+    public Team getOpposite() {
+        return this == BLUE ? RED : BLUE;
+    }
+
 }

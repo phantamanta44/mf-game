@@ -8,13 +8,14 @@ import java.util.UUID;
 
 public class Announcer {
 
+    public static final String PREF_MF = "\u00a7dSystem \u00a78>> \u00a77";
     public static final String PREF_GLOBAL = "\u00a7a[ALL] \u00a7r";
     public static final String PREF_TEAM_RED = "\u00a7c[TEAM] \u00a7r";
     public static final String PREF_TEAM_BLUE = "\u00a79[TEAM] \u00a7r";
     public static final String PREF_PLAYER = "\u00a78[\u00a74!\u00a78] \u00a7r";
 
-    public static void global(String msg) {
-        Bukkit.getServer().broadcastMessage(PREF_GLOBAL + msg);
+    public static void system(String msg) {
+        Bukkit.getServer().broadcastMessage(PREF_MF + msg);
     }
 
     public static void game(String msg) {
